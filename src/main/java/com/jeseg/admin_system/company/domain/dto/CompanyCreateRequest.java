@@ -3,8 +3,7 @@ import lombok.Data;
 
 @Data
 public class CompanyCreateRequest {
-    String name;
-    String users;
-    String logoUrl;
-    String color;
+    private String name;
+    private String logoUrl;
+    private String color;
 }

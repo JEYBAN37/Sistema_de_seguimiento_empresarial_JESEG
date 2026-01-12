@@ -15,6 +15,10 @@ public class BusinessException extends ApplicationException {
     public enum Type {
         ERROR_BASE(new Error(CodigosErrorNegocio.NEGOCIO_1, TipoError.NEGOCIO, "Error Mensaje Corto", "descripcion especifica del error")),
         ERROR_GUARDAR_COMPANIA(new Error(CodigosErrorNegocio.NEGOCIO_2, TipoError.NEGOCIO, "Error al guardar", "Hay un error al guardar la compañia")),
+        ERROR_GUARDAR_ROLE(new Error(CodigosErrorNegocio.NEGOCIO_2, TipoError.NEGOCIO, "Error al guardar", "La compañia no existe")),
+        ERROR_GUARDAR_USUARIOS(new Error(CodigosErrorNegocio.NEGOCIO_2, TipoError.NEGOCIO, "Error al guardar usuarios", "La compañia no existe")),
+        ERROR_GUARDAR_HIERARCHY(new Error(CodigosErrorNegocio.NEGOCIO_2, TipoError.NEGOCIO, "Error al guardar jerarquias", "La compañia no existe")),
+        ERROR_GUARDAR_HIERARCHY_NO_EXISTE(new Error(CodigosErrorNegocio.NEGOCIO_2, TipoError.NEGOCIO, "Error al guardar jerarquias no existe node", "El nodo no existe")),
         ERROR_CONSULTANTE_NULL(new Error(CodigosErrorNegocio.NEGOCIO_3, TipoError.NEGOCIO, "Consultante nulo", "El consultante no puede ser nulo")),;
 
         private final Error error;
@@ -33,6 +37,9 @@ public class BusinessException extends ApplicationException {
             this.error = error;
         }
 
+        public Exception build(String s) {
+            return null;
+        }
     }
 
     public BusinessException(Type type) {
