@@ -26,7 +26,8 @@ public class UsersAdapter implements UserInterface {
     public void saveUsers(List<UserCreateRequest> users) {
 
         List<UserJepegEntity> entities = users.stream()
-                .map(user -> UserJepegEntity.builder()
+                .map(user ->
+                        UserJepegEntity.builder()
                         .cedula(user.getCedula())
                         .password(encodePassword(user.getPassword()))
                         .username(user.getUsername())

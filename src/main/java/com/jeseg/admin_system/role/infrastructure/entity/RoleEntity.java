@@ -13,6 +13,7 @@ import org.hibernate.annotations.CreationTimestamp;
 @Data
 @Builder
 @Table(name = "roles")
+
 @AllArgsConstructor // Genera constructor con todos los campos
 @NoArgsConstructor
 public class RoleEntity {

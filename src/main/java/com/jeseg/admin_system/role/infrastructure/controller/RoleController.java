@@ -19,8 +19,8 @@ public class RoleController {
     private final RoleService companyService;
 
     @PostMapping("/create")
-    public ResponseEntity<?> createCompany(@Valid @RequestBody RoleCreateRequest companyCreateRequest) {
-        companyService.saveRole(companyCreateRequest);
+    public ResponseEntity<?> createCompany(@Valid @RequestBody RoleCreateRequest roleCreateRequest) {
+        companyService.saveRole(roleCreateRequest);
         return ResponseEntity.ok(Collections.singletonMap("message", "Operación Exitosa"));
     }
 

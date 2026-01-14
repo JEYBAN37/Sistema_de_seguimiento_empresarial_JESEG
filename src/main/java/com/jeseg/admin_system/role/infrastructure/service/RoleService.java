@@ -15,16 +15,9 @@ import java.util.List;
 public class RoleService {
     private final RoleUseCases companyUseCases;
 
-    public void saveRole(RoleCreateRequest companyCreateRequest) {
-        try {
-            companyUseCases.createRole(companyCreateRequest);
-        } catch (Exception e) {
-            throw BusinessException.Type.ERROR_GUARDAR_ROLE.build();
-        }
-    }
+    public void saveRole(RoleCreateRequest roleCreateRequest) {
+            companyUseCases.createRole(roleCreateRequest);
 
-    //public List<RoleEntity> allCompanies(){
-    //    return companyUseCases.getAll();
-    //}
+    }
 
 }

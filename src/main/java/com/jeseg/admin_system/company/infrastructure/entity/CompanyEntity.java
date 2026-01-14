@@ -1,12 +1,20 @@
 package com.jeseg.admin_system.company.infrastructure.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
 @Data
-@Table(name = "companies")
+@Table(name = "companies", uniqueConstraints = {
+        @UniqueConstraint(name = "uk_companies_name", columnNames = {"name"})
+})
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class CompanyEntity {
 
     @Id

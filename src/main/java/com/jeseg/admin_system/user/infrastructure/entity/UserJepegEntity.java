@@ -3,6 +3,7 @@ import com.jeseg.admin_system.company.infrastructure.entity.CompanyEntity;
 import com.jeseg.admin_system.hierarchyNode.infrastructure.entity.HierarchyNodeEntity;
 import com.jeseg.admin_system.role.infrastructure.entity.RoleEntity;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,9 +29,11 @@ public class UserJepegEntity {
     private String password;
 
     @Column(length = 100, nullable = false)
+    @NotBlank(message = "El nombre es obligatorio")
     private String nombreCompleto;
 
     @Column(length = 50, nullable = false)
+    @NotBlank(message = "La cedula es obligatorio")
     private String cedula;
 
     @Column(length = 50)
@@ -41,7 +44,7 @@ public class UserJepegEntity {
 
     @Column(nullable = false)
     @Builder.Default
-    private Boolean active = true;
+    private Boolean active = false;
 
     @ManyToOne
     private CompanyEntity company;

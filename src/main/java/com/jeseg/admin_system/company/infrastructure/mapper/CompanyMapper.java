@@ -8,8 +8,5 @@ import org.mapstruct.MappingConstants;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface CompanyMapper {
-    @Mapping(source = "name", target = "name")
-    @Mapping(source = "logoUrl", target = "logoUrl")
-    @Mapping(source = "color", target = "color")
     CompanyEntity toEntity(CompanyCreateRequest company);
 }

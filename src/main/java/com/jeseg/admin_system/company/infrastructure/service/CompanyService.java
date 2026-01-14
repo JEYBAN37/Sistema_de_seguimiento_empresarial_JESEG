@@ -1,8 +1,7 @@
 package com.jeseg.admin_system.company.infrastructure.service;
 
-
-import com.jeseg.admin_system.application.ex.BusinessException;
 import com.jeseg.admin_system.company.domain.dto.CompanyCreateRequest;
+import com.jeseg.admin_system.company.domain.dto.CompanyResponse;
 import com.jeseg.admin_system.company.domain.usecase.CompanyUseCases;
 import com.jeseg.admin_system.company.infrastructure.entity.CompanyEntity;
 import lombok.AllArgsConstructor;
@@ -15,13 +14,8 @@ import java.util.List;
 public class CompanyService {
     private final CompanyUseCases companyUseCases;
 
-    public void saveCompany(CompanyCreateRequest companyCreateRequest) {
-        try {
-            System.out.println("sdad");
-            companyUseCases.createCompany(companyCreateRequest);
-        } catch (Exception e) {
-            throw BusinessException.Type.ERROR_GUARDAR_COMPANIA.build(e);
-        }
+    public CompanyResponse saveCompany(CompanyCreateRequest companyCreateRequest) {
+            return companyUseCases.createCompany(companyCreateRequest);
     }
 
     public List<CompanyEntity> allCompanies(){
