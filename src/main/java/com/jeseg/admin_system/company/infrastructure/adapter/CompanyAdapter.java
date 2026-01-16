@@ -8,14 +8,9 @@ import com.jeseg.admin_system.company.infrastructure.entity.CompanyEntity;import
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.swing.text.html.parser.Entity;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
+
+import static com.jeseg.admin_system.application.UploadsGeneric.uploadedFiles;
 
 @Repository
 @AllArgsConstructor
@@ -30,7 +25,7 @@ public class CompanyAdapter implements CompanyInterface {
             throw BusinessException.Type.ERROR_GUARDAR_COMPANIA_NOMBRE_REPETIDO.build();
         }
         CompanyEntity companySave = companyRepository.save(CompanyEntity.builder()
-                .logoUrl(uploadedFiles(company.getFile()))
+                .logoUrl(uploadedFiles(company.getFile(),"uploads/logos/"))
                 .color(company.getColor())
                 .name(company.getName()).build());
 
@@ -39,28 +34,6 @@ public class CompanyAdapter implements CompanyInterface {
                 .build();
     }
 
-
-    private String uploadedFiles(MultipartFile file) {
-
-        if (file == null || file.isEmpty()) {
-           throw BusinessException.Type.ERROR_GUARDAR_COMPANIA_LOGO_VACIO.build();
-        }
-
-        try {
-            String uploadDir = "uploads/logos/";
-            String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-            Path path = Paths.get(uploadDir + fileName);
-
-            // 2. Guardar el archivo físicamente
-            Files.createDirectories(path.getParent());
-            Files.write(path, file.getBytes());
-
-            // 3. Crear la URL para la base de datos
-            return "/images/" + fileName;
-        } catch (Exception e) {
-            throw BusinessException.Type.ERROR_GUARDAR_COMPANIA.build(e);
-        }
-    }
 
     @Override
     public List<CompanyEntity> allCompanies() {

@@ -1,10 +1,8 @@
 package com.jeseg.admin_system.role.domain.usecase;
 
-import com.jeseg.admin_system.company.domain.intreface.CompanyInterface;
 import com.jeseg.admin_system.role.domain.dto.RoleCreateRequest;
+import com.jeseg.admin_system.role.domain.dto.RoleResponse;
 import com.jeseg.admin_system.role.domain.intreface.RoleInterface;
-import com.jeseg.admin_system.role.domain.model.Role;
-import com.jeseg.admin_system.role.infrastructure.entity.RoleEntity;
 import lombok.AllArgsConstructor;
 
 import java.util.List;
@@ -18,7 +16,7 @@ public class RoleUseCases {
             roleInterface.createRole(roleCreateRequest);
     }
 
-    public List<Role> getRoleXCompanies(Long idCompany){
+    public List<RoleResponse> getRoleXCompanies(Long idCompany){
         return roleInterface.foundRolesXCompany(idCompany);
     }
 }

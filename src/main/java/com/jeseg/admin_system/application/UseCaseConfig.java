@@ -8,6 +8,8 @@ import com.jeseg.admin_system.document.domain.intreface.DocumentInterface;
 import com.jeseg.admin_system.document.domain.usecase.DocumentUseCases;
 import com.jeseg.admin_system.hierarchyNode.domain.intreface.HierarchyNodeInterface;
 import com.jeseg.admin_system.hierarchyNode.domain.usecase.HierarchyNodeUseCase;
+import com.jeseg.admin_system.parameters.domain.interfaces.ParameterInterface;
+import com.jeseg.admin_system.parameters.domain.usecases.ParametersUseCase;
 import com.jeseg.admin_system.role.domain.intreface.RoleInterface;
 import com.jeseg.admin_system.role.domain.usecase.RoleUseCases;
 import com.jeseg.admin_system.task.domain.intreface.TaskInterface;
@@ -58,5 +60,10 @@ public class UseCaseConfig {
     @Bean
     public ApprovalUseCases approvalUseCases (ApprovalInterface approvalInterface){
         return new ApprovalUseCases(approvalInterface);
+    }
+
+    @Bean
+    public ParametersUseCase parametersUseCase (ParameterInterface parameterInterface){
+        return new ParametersUseCase( parameterInterface);
     }
 }

@@ -4,6 +4,7 @@ import com.jeseg.admin_system.application.ex.BusinessException;
 import com.jeseg.admin_system.company.infrastructure.repository.CompanyRepository;
 import com.jeseg.admin_system.role.domain.dto.RoleCreateRequest;
 import com.jeseg.admin_system.role.domain.dto.RoleItemRequest;
+import com.jeseg.admin_system.role.domain.dto.RoleResponse;
 import com.jeseg.admin_system.role.domain.intreface.RoleInterface;
 import com.jeseg.admin_system.role.domain.model.Role;
 import com.jeseg.admin_system.role.infrastructure.entity.RoleEntity;
@@ -58,7 +59,14 @@ public class RoleAdapter implements RoleInterface {
 
 
     @Override
-    public List<Role> foundRolesXCompany(Long idCompany) {
-        return List.of();
+    public List<RoleResponse> foundRolesXCompany(Long companyId) {
+        return List.of(
+                // data quemadaq
+                RoleResponse.builder().id(1L).name("Admin").id(companyId).build(),
+                RoleResponse.builder().id(2L).name("User").id(companyId).build(),
+                RoleResponse.builder().id(3L).name("Guest").id(companyId).build(),
+                RoleResponse.builder().id(4L).name("Manager").id(companyId).build()
+
+        );
     }
 }

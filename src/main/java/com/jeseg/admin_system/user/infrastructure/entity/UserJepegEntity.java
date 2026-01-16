@@ -9,6 +9,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
 @Entity
 @Table(name = "users", uniqueConstraints = {
         @UniqueConstraint(name = "uk_user_cedula", columnNames = {"cedula"})
@@ -55,5 +58,29 @@ public class UserJepegEntity {
     @ManyToOne
     @JoinColumn(name = "hierarchy_node_id")
     private HierarchyNodeEntity hierarchyNode;
+
+    private LocalDate fechaInicioContrato;
+
+    private LocalDate fechaTerminoContrato;
+
+    @Column(length = 200)
+    private String objeto;
+
+    @Column(length = 5)
+    private String contratistaTipoIdentificacion;
+
+    @Column(length = 50)
+    private String numeroSupervisor;
+
+    @Column(length = 100)
+    private String nombreSupervisor;
+
+    private BigDecimal pagado;
+
+    private BigDecimal valorContratado;
+
+    private Long idRecurso;
+
+    private BigDecimal saldo;
 
 }
