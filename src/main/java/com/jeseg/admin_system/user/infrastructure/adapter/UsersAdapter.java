@@ -12,10 +12,13 @@ import com.jeseg.admin_system.user.domain.dto.UserCsvRow;
 import com.jeseg.admin_system.user.domain.dto.UserResponse;
 import com.jeseg.admin_system.user.domain.intreface.UserInterface;
 
+import com.jeseg.admin_system.user.domain.model.User;
 import com.jeseg.admin_system.user.infrastructure.entity.UserJepegEntity;
 import com.jeseg.admin_system.user.infrastructure.mapper.UserMapper;
 import com.jeseg.admin_system.user.infrastructure.repository.UserRepository;
 import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
+import com.opencsv.RFC4180ParserBuilder;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
 import com.opencsv.bean.HeaderColumnNameMappingStrategy;
@@ -65,8 +68,8 @@ public class UsersAdapter implements UserInterface {
             "estado",
             "rol",
             "cargo",
-            "telefono"
-
+            "telefono",
+            "compania"
     );
 
 
@@ -102,92 +105,99 @@ public class UsersAdapter implements UserInterface {
 
     @Override
     public List<List<UserCreateRequest>> validUserCsv(MultipartFile file) {
-
         String mimetype = file.getContentType();
-        String dir = file.getOriginalFilename();
 
-        if (mimetype == null || !mimetype.equals("text/csv")) {
+        if (mimetype == null || (!mimetype.equals("text/csv") && !mimetype.equals("application/vnd.ms-excel"))) {
             throw BusinessException.Type.ERROR_FORMATO_CSV_INVALIDO.build();
         }
 
+        try {
+            // 1. Detectar el separador leyendo la primera línea manualmente
+            byte[] fileContent = file.getBytes();
+            String firstLine = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(fileContent))).readLine();
 
-        try (CSVReader csvReader = new CSVReader(new InputStreamReader(file.getInputStream()))) {
+            if (firstLine == null) throw BusinessException.Type.ERROR_CSV_SIN_ENCABEZADOS.build();
 
-            String[] headers = csvReader.readNext();
-            if (headers == null || headers.length == 0) {
-                throw BusinessException.Type.ERROR_CSV_SIN_ENCABEZADOS.build();
+            // Si la línea tiene ';' usamos ese, de lo contrario ','
+            char separator = firstLine.contains(";") ? ';' : ',';
+
+            // 2. Validar Encabezados con el separador detectado
+            try (CSVReader csvReader = new CSVReaderBuilder(new InputStreamReader(new ByteArrayInputStream(fileContent)))
+                    .withCSVParser(new RFC4180ParserBuilder().withSeparator(separator).build())
+                    .build()) {
+
+                String[] headers = csvReader.readNext();
+                if (headers == null || headers.length == 0) {
+                    throw BusinessException.Type.ERROR_CSV_SIN_ENCABEZADOS.build();
+                }
+
+                // Limpieza de BOM y espacios
+                headers[0] = headers[0].replace("\uFEFF", "").trim();
+                List<String> actualHeaders = Arrays.stream(headers).map(String::trim).toList();
+
+                if (!EXPECTED_HEADERS.equals(actualHeaders)) {
+                    throw BusinessException.Type.ERROR_ENCABEZADOS_CSV_INVALIDOS.build();
+                }
             }
 
-            headers[0] = headers[0].replace("\uFEFF", "").trim();
-
-
-            List<String> actualHeaders = Arrays.stream(headers)
-                    .map(String::trim)
-                    .toList();
-
-
-            if (!EXPECTED_HEADERS.equals(actualHeaders)) {
-                throw BusinessException.Type.ERROR_ENCABEZADOS_CSV_INVALIDOS.build();
-            }
-
-            String url = uploadedFiles(file,"uploads/csv/");
-
+            // 3. Guardar archivo y procesar contenido
+            String url = uploadedFiles(file, "uploads/csv/");
             HeaderColumnNameMappingStrategy<UserCsvRow> strategy = new HeaderColumnNameMappingStrategy<>();
             strategy.setType(UserCsvRow.class);
 
-            InputStream is = Files.newInputStream(Paths.get(url));
-            BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+            try (BufferedReader reader = Files.newBufferedReader(Paths.get(url), StandardCharsets.UTF_8)) {
+                // Manejo de BOM en la lectura final
+                reader.mark(1);
+                if (reader.read() != 0xFEFF) reader.reset();
 
-            reader.mark(1);
-            if (reader.read() != 0xFEFF) {
-                reader.reset();
+                CsvToBean<UserCsvRow> csvToBean = new CsvToBeanBuilder<UserCsvRow>(reader)
+                        .withMappingStrategy(strategy)
+                        .withType(UserCsvRow.class)
+                        .withSeparator(separator) // <--- CRÍTICO: Usar el mismo separador detectado
+                        .withIgnoreLeadingWhiteSpace(true)
+                        .build();
+
+                List<UserCsvRow> post = csvToBean.parse();
+                return identifyTypeOfOperation(post);
             }
 
-            CsvToBean<UserCsvRow> csvToBean = new CsvToBeanBuilder<UserCsvRow>(reader)
-                    .withMappingStrategy(strategy)
-                    .withType(UserCsvRow.class)
-                    .withSkipLines(0)
-                    .withIgnoreLeadingWhiteSpace(true)
-                    .build();
-
-
-            return identifyTypeOfOperation(csvToBean.parse());
-
-        } catch (IOException | CsvValidationException e) {
+        } catch (Exception e) {
             throw BusinessException.Type.ERROR_BASE.build(e);
         }
-
     }
 
 
     private List<List<UserCreateRequest>> identifyTypeOfOperation(List<UserCsvRow> usersCsv) {
+        // Definimos los indicadores válidos
+        Set<String> validIndicators = Set.of("I", "A", "E");
 
-        List<UserCreateRequest> usersToInvalid =  usersCsv.stream()
-                .filter(user ->
-                        !user.getIndicador().equalsIgnoreCase("I") ||
-                                !user.getIndicador().equalsIgnoreCase("A") ||
-                                !user.getIndicador().equalsIgnoreCase("E"))
+        // 1. Filtrar los inválidos (Los que NO están en la lista de permitidos)
+        List<UserCreateRequest> usersToInvalid = usersCsv.stream()
+                .filter(user -> user.getIndicador() == null ||
+                        !validIndicators.contains(user.getIndicador().toUpperCase()))
                 .map(userMapper::toCreateRequest)
                 .toList();
 
-        List<UserCreateRequest> usersToCreate =  usersCsv.stream()
-                .filter(user -> user.getIndicador().equalsIgnoreCase("I"))
+        // 2. Filtrar Creación (Insertar)
+        List<UserCreateRequest> usersToCreate = usersCsv.stream()
+                .filter(user -> "I".equalsIgnoreCase(user.getIndicador()))
                 .map(userMapper::toCreateRequest)
                 .toList();
 
-        List<UserCreateRequest> usersToUpdate =  usersCsv.stream()
-                .filter(user -> user.getIndicador().equalsIgnoreCase("A"))
+        // 3. Filtrar Actualización (Actualizar)
+        List<UserCreateRequest> usersToUpdate = usersCsv.stream()
+                .filter(user -> "A".equalsIgnoreCase(user.getIndicador()))
                 .map(userMapper::toCreateRequest)
                 .toList();
 
-        List<UserCreateRequest> usersToDelete =  usersCsv.stream()
-                .filter(user -> user.getIndicador().equalsIgnoreCase("E"))
+        // 4. Filtrar Eliminación (Eliminar/Estado inactivo)
+        List<UserCreateRequest> usersToDelete = usersCsv.stream()
+                .filter(user -> "E".equalsIgnoreCase(user.getIndicador()))
                 .map(userMapper::toCreateRequest)
                 .toList();
 
-        return List.of(usersToInvalid,usersToCreate, usersToUpdate, usersToDelete);
+        return List.of(usersToInvalid, usersToCreate, usersToUpdate, usersToDelete);
     }
-
 
 
     @Override
@@ -317,10 +327,18 @@ public class UsersAdapter implements UserInterface {
 
     @Override
     @Transactional
-    public void deleteUsers(List<String> userContrats, Long idCompany) {
-        List<UserJepegEntity> users = userRepository.findByContratoInAndCompanyId(userContrats, idCompany)
-                .orElseThrow(BusinessException.Type.ERROR_USUARIO_NO_ENCONTRADO::build);
-        userRepository.deleteAll(users);
+    public void deleteUsers(List<UserCreateRequest> userContrats) {
+
+        Long company = userContrats.get(0).getCompany();
+        if (company != null){
+
+            List<String> usersId = userContrats.stream().map(UserCreateRequest::getContrato).toList();
+
+
+            List<UserJepegEntity> users = userRepository.findByContratoInAndCompanyId(usersId, company)
+                    .orElseThrow(BusinessException.Type.ERROR_USUARIO_NO_ENCONTRADO::build);
+            userRepository.deleteAll(users);
+        }
     }
 
 

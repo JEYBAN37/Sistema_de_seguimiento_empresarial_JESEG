@@ -12,5 +12,5 @@ public interface UserInterface {
     List<List<UserCreateRequest>> validUserCsv(MultipartFile file);
     void createUsers(List<UserCreateRequest> users);
     void updateUsers(List<UserCreateRequest> users);
-    void deleteUsers(List<String> userContrats, Long companyId);
+    void deleteUsers(List<UserCreateRequest> userContrats);
 }

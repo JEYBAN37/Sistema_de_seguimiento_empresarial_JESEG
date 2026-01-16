@@ -44,13 +44,16 @@ public class UserService {
     public void uploadUsersFromCsv(MultipartFile csvContent) {
         List<List<UserCreateRequest>> users =  usersUseCase.validUsers(csvContent);
 
+        List<UserCreateRequest> create = !users.get(1).isEmpty() ? users.get(1) : null ;
+        List<UserCreateRequest> uplate = !users.get(2).isEmpty()  ? users.get(2) : null ;
+        List<UserCreateRequest> delete = !users.get(3).isEmpty() ? users.get(3) : null ;
+
         List<UserCreateRequest> invalidUsers = users.get(0);
+
         if (!invalidUsers.isEmpty()){
             return;
         }
-        usersUseCase.UserDelegate(users.get(1),users.get(2),users.get(3));
+
+        usersUseCase.UserDelegate(create,uplate,delete);
     }
-
-
-
 }

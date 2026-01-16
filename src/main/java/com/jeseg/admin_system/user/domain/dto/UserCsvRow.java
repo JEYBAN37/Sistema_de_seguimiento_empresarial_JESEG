@@ -29,8 +29,8 @@ public class UserCsvRow {
     private String id_recurso;
     private String saldo;
     private String estado;
-    private Long rol;
+    private String rol;
     private String cargo;
     private String telefono;
-    private Long compania;
+    private String compania;
 }
