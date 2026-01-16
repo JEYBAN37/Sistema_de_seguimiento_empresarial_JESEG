@@ -11,12 +11,21 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserCreateRequest {
 
-    private String username;
-    private String password;
     private String nombre;
     private String cedula;
     private String telefono;
     private String contrato;
     private Long company;
     private Long role;
+    private String fechaInicioContrato;
+    private String fechaTerminoContrato;
+    private String objeto;
+    private String numeroSupervisor;
+    private String nombreSupervisor;
+    private String pagado;
+    private String valorContratado;
+    private String idRecurso;
+    private String saldo;
+    private String estado;
+    private String cargo;
 }

@@ -83,4 +83,5 @@ public class UserJepegEntity {
 
     private BigDecimal saldo;
 
+
 }

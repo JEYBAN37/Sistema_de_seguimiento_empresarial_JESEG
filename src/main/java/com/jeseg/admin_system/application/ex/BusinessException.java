@@ -20,9 +20,12 @@ public class BusinessException extends ApplicationException {
         ERROR_GUARDAR_HIERARCHY_COMPANIA_NO_EXISTE(new Error(CodigosErrorNegocio.NEGOCIO_2, TipoError.NEGOCIO, "Error al guardar jerarquias", "La compañia no existe")),
         ERROR_GUARDAR_COMPANIA_NOMBRE_REPETIDO(new Error(CodigosErrorNegocio.NEGOCIO_2, TipoError.NEGOCIO, "Error al guardar", "Esta compania ya existe")),
         ERROR_GUARDAR_ROLE(new Error(CodigosErrorNegocio.NEGOCIO_2, TipoError.NEGOCIO, "Error al guardar", "La compañia no existe")),
+        ERROR_CARGO_NO_ENCONTRADO (new Error(CodigosErrorNegocio.NEGOCIO_2, TipoError.NEGOCIO, "Error al guardar", "El cargo no fue encontrado")),
         LISTADO_VACIO_ROLE (new Error(CodigosErrorNegocio.NEGOCIO_2, TipoError.NEGOCIO, "Error al guardar", "El listado de roles no puede estar vacio")),
         ROLE_YA_EXISTE_EN_COMPANIA (new Error(CodigosErrorNegocio.NEGOCIO_2, TipoError.NEGOCIO, "Error al guardar", "El rol ya existe en la compañia")),
         ERROR_FORMATO_CSV_INVALIDO (new Error(CodigosErrorNegocio.NEGOCIO_2, TipoError.NEGOCIO, "Error al guardar usuarios", "El formato del archivo es invalido (CSV)")),
+        ERROR_USUARIO_NO_ENCONTRADO (new Error(CodigosErrorNegocio.NEGOCIO_2, TipoError.NEGOCIO, "Error al guardar usuarios", "El usuario a eliminar no fue encontrado")),
+        ERROR_USUARIO_YA_EXISTE (new Error(CodigosErrorNegocio.NEGOCIO_2, TipoError.NEGOCIO, "Error al guardar usuarios", "El usuario ya existe en la compañia")),
         ERROR_GUARDAR_USUARIOS(new Error(CodigosErrorNegocio.NEGOCIO_2, TipoError.NEGOCIO, "Error al guardar usuarios", "La compañia no existe")),
         ERROR_GUARDAR_HIERARCHY(new Error(CodigosErrorNegocio.NEGOCIO_2, TipoError.NEGOCIO, "Error al guardar jerarquias", "La compañia no existe")),
         ERROR_GUARDAR_HIERARCHY_NO_EXISTE(new Error(CodigosErrorNegocio.NEGOCIO_2, TipoError.NEGOCIO, "Error al guardar jerarquias no existe node", "El nodo no existe")),
@@ -44,6 +47,7 @@ public class BusinessException extends ApplicationException {
         public BusinessException build(Throwable cause) {
             return new BusinessException(this, cause);
         }
+
         Type(Error error) {
             this.error = error;
         }
@@ -51,6 +55,8 @@ public class BusinessException extends ApplicationException {
         public Exception build(String s) {
             return null;
         }
+
+
     }
 
     public BusinessException(Type type) {
@@ -60,5 +66,7 @@ public class BusinessException extends ApplicationException {
     public BusinessException(Type type, Throwable cause) {
         super(type.error, cause); // Asegúrate de que ApplicationException también reciba 'cause'
     }
+
+
 
 }

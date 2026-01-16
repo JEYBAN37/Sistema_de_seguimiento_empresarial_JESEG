@@ -4,13 +4,10 @@ package com.jeseg.admin_system.user.infrastructure.service;
 
 import com.jeseg.admin_system.hierarchyNode.domain.dto.HierarchyNodeResponse;
 import com.jeseg.admin_system.hierarchyNode.domain.usecase.HierarchyNodeUseCase;
-
-
 import com.jeseg.admin_system.parameters.domain.usecases.ParametersUseCase;
 import com.jeseg.admin_system.role.domain.dto.RoleResponse;
 import com.jeseg.admin_system.role.domain.usecase.RoleUseCases;
 import com.jeseg.admin_system.user.domain.dto.UserCreateRequest;
-import com.jeseg.admin_system.user.domain.dto.UserCsvRow;
 import com.jeseg.admin_system.user.domain.dto.UserPageAdminRequest;
 import com.jeseg.admin_system.user.domain.dto.UserResponse;
 import com.jeseg.admin_system.user.domain.usecase.UserUseCase;
@@ -28,9 +25,6 @@ public class UserService {
     private final RoleUseCases roleUseCases;
     private final ParametersUseCase parametersUseCase;
 
-    public void saveUsers(List<UserCreateRequest> users) {
-            usersUseCase.createUsers(users);
-    }
 
     public UserPageAdminRequest getUsersAdminPage(Long companyId) {
         List<HierarchyNodeResponse> jearaquias =  hierarchyNodeUseCase.getStructure(companyId);
@@ -47,10 +41,14 @@ public class UserService {
 
     }
 
-    public UserCreateRequest uploadUsersFromCsv(MultipartFile csvContent) {
-        List<UserCsvRow> users =  usersUseCase.validUsers(csvContent);
-        usersUseCase.createUsers(users).toList();
-        return null;
+    public void uploadUsersFromCsv(MultipartFile csvContent) {
+        List<List<UserCreateRequest>> users =  usersUseCase.validUsers(csvContent);
+
+        List<UserCreateRequest> invalidUsers = users.get(0);
+        if (!invalidUsers.isEmpty()){
+            return;
+        }
+        usersUseCase.UserDelegate(users.get(1),users.get(2),users.get(3));
     }
 
 

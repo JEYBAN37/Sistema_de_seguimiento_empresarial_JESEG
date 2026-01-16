@@ -8,7 +8,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 public interface UserInterface {
-    void saveUsers(List<UserCreateRequest> users);
     List<UserResponse> getUsersAdminPage(Long companyId);
-    List <UserCsvRow> validUserCsv(MultipartFile file);
+    List<List<UserCreateRequest>> validUserCsv(MultipartFile file);
+    void createUsers(List<UserCreateRequest> users);
+    void updateUsers(List<UserCreateRequest> users);
+    void deleteUsers(List<String> userContrats, Long companyId);
 }
