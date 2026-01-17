@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface RoleRepository extends JpaRepository<RoleEntity, Long> {
     boolean existsByNameInAndCompanyId(List<String> names, Long companyId);
+    List<RoleEntity> findAllByCompanyId( Long companyId);
 }

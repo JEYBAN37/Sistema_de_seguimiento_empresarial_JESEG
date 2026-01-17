@@ -60,13 +60,7 @@ public class RoleAdapter implements RoleInterface {
 
     @Override
     public List<RoleResponse> foundRolesXCompany(Long companyId) {
-        return List.of(
-                // data quemadaq
-                RoleResponse.builder().id(1L).name("Admin").id(companyId).build(),
-                RoleResponse.builder().id(2L).name("User").id(companyId).build(),
-                RoleResponse.builder().id(3L).name("Guest").id(companyId).build(),
-                RoleResponse.builder().id(4L).name("Manager").id(companyId).build()
-
-        );
+        return roleRepository.findAllByCompanyId(companyId).stream().map( r ->
+                RoleResponse.builder().id(r.getId()).name(r.getName()).build()).toList();
     }
 }
