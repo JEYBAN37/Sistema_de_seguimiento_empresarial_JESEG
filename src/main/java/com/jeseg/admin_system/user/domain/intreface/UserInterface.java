@@ -10,7 +10,7 @@ import java.util.List;
 public interface UserInterface {
     List<UserResponse> getUsersAdminPage(Long companyId);
     List<List<UserCreateRequest>> validUserCsv(MultipartFile file);
-    void createUsers(List<UserCreateRequest> users);
+    void createUsers(List<UserCreateRequest> users) ;
     void updateUsers(List<UserCreateRequest> users);
     void deleteUsers(List<UserCreateRequest> userContrats);
 }

@@ -18,7 +18,7 @@ public interface UserMapper {
     @Mapping(target = "nombreSupervisor", source = "nombre_supervisor")
     @Mapping(target = "valorContratado", source = "valor_contratado")
     @Mapping(target = "idRecurso", source = "id_recurso")
-    @Mapping(target = "company", source = "compania")
     @Mapping(target = "role", source = "rol")
+    @Mapping(target = "company", source = "compania")
     UserCreateRequest toCreateRequest(UserCsvRow csvRow);
 }

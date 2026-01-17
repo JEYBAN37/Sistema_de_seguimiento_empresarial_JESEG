@@ -6,6 +6,7 @@ import com.jeseg.admin_system.hierarchyNode.domain.dto.HierarchyResponse;
 import com.jeseg.admin_system.hierarchyNode.infrastructure.entity.HierarchyNodeEntity;
 import com.jeseg.admin_system.hierarchyNode.infrastructure.repository.HierarchyNodeRepository;
 import com.jeseg.admin_system.role.domain.dto.RoleResponse;
+import com.jeseg.admin_system.role.infrastructure.entity.RoleEntity;
 import com.jeseg.admin_system.role.infrastructure.repository.RoleRepository;
 import com.jeseg.admin_system.user.domain.dto.UserCreateRequest;
 import com.jeseg.admin_system.user.domain.dto.UserCsvRow;
@@ -34,8 +35,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+import static com.jeseg.admin_system.application.UploadsGeneric.parseFecha;
 import static com.jeseg.admin_system.application.UploadsGeneric.uploadedFiles;
 import static java.util.stream.Collectors.toList;
 
@@ -48,7 +51,6 @@ public class UsersAdapter implements UserInterface {
     private final HierarchyNodeRepository hierarchyNodeRepository;
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-
     private static final List<String> EXPECTED_HEADERS = List.of(
             "numero_contrato",
             "indicador",
@@ -90,10 +92,15 @@ public class UsersAdapter implements UserInterface {
                                 .id(user.getRole().getId())
                                 .name(user.getRole().getName())
                                 .build())
-                        .objeto(user.getObjeto())
-                        .pagado(user.getPagado())
+                        .objeto(user.getObjeto().substring(0, Math.min(user.getObjeto().length(), 150)))
+                        .pagado(String.valueOf(user.getPagado()))
+                        .valorContratado(String.valueOf(user.getValorContratado()))
+                        .saldo(String.valueOf(user.getSaldo()))
                         .contrato(user.getContrato())
                         .idRecurso(user.getIdRecurso())
+                        .active(user.getActive())
+                        .numeroSupervisor(user.getNumeroSupervisor())
+                        .nombreSupervisor(user.getNombreSupervisor())
                         .hierarchyNode(HierarchyResponse.builder()
                                 .id(user.getHierarchyNode().getId())
                                 .nombre(user.getHierarchyNode().getName())
@@ -199,60 +206,66 @@ public class UsersAdapter implements UserInterface {
         return List.of(usersToInvalid, usersToCreate, usersToUpdate, usersToDelete);
     }
 
-
     @Override
     @Transactional
-    public void createUsers(List<UserCreateRequest> users) {
+    public void createUsers(List<UserCreateRequest> usersRequest){
         Set<Long> occupiedIds = new HashSet<>();
-        Long companyId = users.get(0).getCompany();
+        Long companyId = usersRequest.get(0).getCompany();
 
-        List<UserJepegEntity> entities = users.stream()
-                .map(user -> {
-                    // 1. Buscamos todos los nodos que empiecen con el nombre del cargo (ej. "Auxiliar")
-                    List<HierarchyNodeEntity> potentialNodes = hierarchyNodeRepository
-                            .findAvailableNodesByPrefix(user.getCargo().trim(), companyId);
+        List<UserJepegEntity> entities = new ArrayList<>();
 
-                    // 2. Filtramos: que no tengan usuario asignado Y que no hayamos usado el ID en este loop
-                    HierarchyNodeEntity node = null;
-                    try {
-                        node = potentialNodes.stream()
-                                .filter(n -> !occupiedIds.contains(n.getId()))
-                                .findFirst()
-                                .orElseThrow(() -> BusinessException.Type.ERROR_BASE.build(
-                                        "No hay vacantes libres para el cargo '" + user.getCargo() +
-                                                "'. Verifique que existan suficientes posiciones (ej. #1, #2) creadas. " +
-                                                "Falla en el registro de: " + user.getNombre()
-                                ));
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
+        for (UserCreateRequest userDto : usersRequest) {
+            // 1. Buscar Nodo
+            List<HierarchyNodeEntity> potentialNodes = hierarchyNodeRepository
+                    .findAvailableNodesByPrefix(userDto.getCargo().trim(), companyId);
 
-                    // 3. Bloqueamos este ID para la siguiente iteración
-                    occupiedIds.add(node.getId());
+            HierarchyNodeEntity node;
+            try {
 
-                    return UserJepegEntity.builder()
-                            .cedula(user.getCedula())
-                            .nombreCompleto(user.getNombre())
-                            .hierarchyNode(node)
-                            .telefono(user.getTelefono())
-                            .contrato(user.getContrato())
-                            .role(roleRepository.getReferenceById(user.getRole()))
-                            .company(companyRepository.getReferenceById(companyId))
-                            .password(encodePassword("Cc" + user.getCedula()))
-                            .username(user.getCedula())
-                            .fechaInicioContrato(LocalDate.parse(user.getFechaInicioContrato()))
-                            .fechaTerminoContrato(LocalDate.parse(user.getFechaTerminoContrato()))
-                            .objeto(user.getObjeto())
-                            .active(Boolean.valueOf(user.getEstado()))
-                            .pagado(new BigDecimal(user.getPagado()))
-                            .idRecurso(Long.valueOf(user.getIdRecurso()))
-                            .valorContratado(new BigDecimal(user.getValorContratado()))
-                            .numeroSupervisor(user.getNumeroSupervisor())
-                            .nombreSupervisor(user.getNombreSupervisor())
-                            .build();
-                })
-                .toList();
+                node = potentialNodes.stream()
+                        .filter(n -> !occupiedIds.contains(n.getId()))
+                        .findFirst()
+                        .orElseThrow(() -> BusinessException.Type.ERROR_BASE.build(
+                                "No hay vacantes libres para el cargo '" + userDto.getCargo() +
+                                        "'. Verifique que existan suficientes posiciones (ej. #1, #2) creadas. " +
+                                        "Falla en el registro de: " + userDto.getNombre()
+                        ));
 
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
+            occupiedIds.add(node.getId());
+
+            // 2. Construir Usuario
+            UserJepegEntity userEntity = UserJepegEntity.builder()
+                    .cedula(userDto.getCedula())
+                    .nombreCompleto(userDto.getNombre())
+                    .hierarchyNode(node)
+                    .telefono(userDto.getTelefono())
+                    .contrato(userDto.getContrato())
+                    .role(roleRepository.findById(userDto.getRole()).orElseThrow(BusinessException.Type.ERROR_ROL_NO_ENCONTRADO::build))
+                    .company(companyRepository.getReferenceById(companyId))
+                    .password(encodePassword("Cc" + userDto.getCedula()))
+                    .username(userDto.getCedula())
+                    .fechaInicioContrato(parseFecha(userDto.getFechaInicioContrato()))
+                    .fechaTerminoContrato(parseFecha(userDto.getFechaInicioContrato()))
+                    .objeto(userDto.getObjeto().substring(0, Math.min(userDto.getObjeto().length(), 150)))
+                    .active(Objects.equals(userDto.getEstado(), "1"))
+                    .pagado(new BigDecimal(userDto.getPagado()))
+                    .idRecurso(userDto.getIdRecurso())
+                    .valorContratado(new BigDecimal(userDto.getValorContratado()))
+                    .numeroSupervisor(userDto.getNumeroSupervisor())
+                    .nombreSupervisor(userDto.getNombreSupervisor())
+                    .build();
+
+            // OPCIONAL: Si necesitas que el objeto 'node' vea al usuario inmediatamente
+            // node.getUsers().add(userEntity);
+
+            entities.add(userEntity);
+        }
+
+        // 3. Guardar todo
         userRepository.saveAll(entities);
     }
 
@@ -314,15 +327,17 @@ public class UsersAdapter implements UserInterface {
         entity.setNombreCompleto(req.getNombre());
         entity.setTelefono(req.getTelefono());
         entity.setRole(roleRepository.getReferenceById(req.getRole()));
-        entity.setFechaInicioContrato(LocalDate.parse(req.getFechaInicioContrato()));
-        entity.setFechaTerminoContrato(LocalDate.parse(req.getFechaTerminoContrato()));
-        entity.setObjeto(req.getObjeto());
+        entity.setFechaInicioContrato(parseFecha(req.getFechaInicioContrato()));
+        entity.setFechaTerminoContrato(parseFecha(req.getFechaInicioContrato()));
+        entity.setObjeto(req.getObjeto().substring(0, Math.min(req.getObjeto().length(), 150)));
         entity.setPagado(new BigDecimal(req.getPagado()));
-        entity.setIdRecurso(Long.valueOf(req.getIdRecurso()));
+        entity.setIdRecurso(req.getIdRecurso());
         entity.setValorContratado(new BigDecimal(req.getValorContratado()));
-        entity.setActive(Boolean.valueOf(req.getEstado()));
+        entity.setActive(Objects.equals(req.getEstado(), "1"));
         entity.setNumeroSupervisor(req.getNumeroSupervisor());
         entity.setNombreSupervisor(req.getNombreSupervisor());
+        entity.setContrato(req.getContrato());
+        entity.setHierarchyNode(entity.getHierarchyNode());
     }
 
     @Override

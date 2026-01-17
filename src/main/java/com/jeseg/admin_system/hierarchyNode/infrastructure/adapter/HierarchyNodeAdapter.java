@@ -43,14 +43,14 @@ public class HierarchyNodeAdapter implements HierarchyNodeInterface {
 
             // Registrar nombres de este nivel como procesados (en minúsculas para evitar errores)
             for (HierarchyEmployee h : nivelActual) {
-                procesados.add(h.getName().toLowerCase().trim());
+                procesados.add(h.getName().toUpperCase().trim());
             }
 
             // 2. Buscar quiénes son hijos de los que acabamos de procesar
             List<HierarchyEmployee> siguienteNivel = new ArrayList<>();
             for (HierarchyEmployee h : originales) {
-                String padreNombre = h.getParent() != null ? h.getParent().toLowerCase().trim() : "";
-                String nombreActual = h.getName().toLowerCase().trim();
+                String padreNombre = h.getParent() != null ? h.getParent().toUpperCase().trim() : "";
+                String nombreActual = h.getName().toUpperCase().trim();
 
                 // Si el padre ya está procesado pero el hijo aún no, pertenece al siguiente nivel
                 if (procesados.contains(padreNombre) && !procesados.contains(nombreActual)) {
@@ -71,7 +71,7 @@ public class HierarchyNodeAdapter implements HierarchyNodeInterface {
                 // Como vamos nivel por nivel, el 'parent' SIEMPRE existirá en el mapa
                 List<HierarchyNodeEntity> plazasGuardadas = guardarPlazas(dto, nameToSavedNodes, hierarchy.getCompany());
 
-                nameToSavedNodes.put(dto.getName().toLowerCase().trim(), plazasGuardadas);
+                nameToSavedNodes.put(dto.getName().toUpperCase().trim(), plazasGuardadas);
             }
         }
     }
@@ -82,7 +82,7 @@ public class HierarchyNodeAdapter implements HierarchyNodeInterface {
             Long company
     ) {
         List<HierarchyNodeEntity> currentLevelPlazas = new ArrayList<>();
-        String currentName = dto.getName().toLowerCase().trim();
+        String currentName = dto.getName().toUpperCase().trim();
 
         for (int i = 0; i < dto.getQuantity(); i++) {
             // Generar nombre de la plaza (ej: Vendedor #1, Vendedor #2 o solo Gerente)
@@ -96,7 +96,7 @@ public class HierarchyNodeAdapter implements HierarchyNodeInterface {
                     .build();
 
             // Lógica de asignación de padre
-            String parentName = (dto.getParent() != null) ? dto.getParent().toLowerCase().trim() : null;
+            String parentName = (dto.getParent() != null) ? dto.getParent().toUpperCase().trim() : null;
 
             if (parentName != null && !parentName.equals("null") && !parentName.isEmpty()) {
                 List<HierarchyNodeEntity> parentPlazas = nameToSavedNodes.get(parentName);

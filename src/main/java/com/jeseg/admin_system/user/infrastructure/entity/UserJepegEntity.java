@@ -46,8 +46,7 @@ public class UserJepegEntity {
     private String contrato;
 
     @Column(nullable = false)
-    @Builder.Default
-    private Boolean active = false;
+    private Boolean active;
 
     @ManyToOne
     private CompanyEntity company;
@@ -79,7 +78,7 @@ public class UserJepegEntity {
 
     private BigDecimal valorContratado;
 
-    private Long idRecurso;
+    private String idRecurso;
 
     private BigDecimal saldo;
 

@@ -34,6 +34,8 @@ public interface HierarchyNodeRepository extends JpaRepository<HierarchyNodeEnti
             @Param("namePrefix") String namePrefix,
             @Param("companyId") Long companyId);
 
+
+
     @Query("SELECT h FROM HierarchyNodeEntity h " +
             "WHERE h.company.id = :companyId " +
             "AND h.users IS EMPTY " +

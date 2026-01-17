@@ -20,15 +20,15 @@ public class UserUseCase {
         return userInterface.getUsersAdminPage(companyId);
     }
 
-    public void UserDelegate(List<UserCreateRequest> usersToCreate ,List<UserCreateRequest> usersToUpload, List<UserCreateRequest> userToDelete){
+    public void UserDelegate(List<UserCreateRequest> usersToCreate ,List<UserCreateRequest> usersToUpload, List<UserCreateRequest> userToDelete) {
 
-        if (!userToDelete.isEmpty())
+        if (userToDelete != null && !userToDelete.isEmpty())
             userInterface.deleteUsers(userToDelete);
 
-        if (!usersToUpload.isEmpty())
+        if (usersToUpload != null && !usersToUpload.isEmpty())
             userInterface.updateUsers(usersToUpload);
 
-        if (!usersToCreate.isEmpty())
+        if (usersToCreate != null && !usersToCreate.isEmpty())
             userInterface.createUsers(usersToCreate);
     }
 

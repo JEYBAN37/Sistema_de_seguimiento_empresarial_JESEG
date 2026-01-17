@@ -23,11 +23,10 @@ public class UserResponse {
     private LocalDate fechaInicioContrato;
     private LocalDate fechaTerminoContrato;
     private String objeto;
-    private String contratistaTipoIdentificacion;
     private String numeroSupervisor;
     private String nombreSupervisor;
-    private BigDecimal pagado;
-    private BigDecimal valorContratado;
-    private Long idRecurso;
-    private BigDecimal saldo;
+    private String pagado;
+    private String valorContratado;
+    private String idRecurso;
+    private String saldo;
 }
