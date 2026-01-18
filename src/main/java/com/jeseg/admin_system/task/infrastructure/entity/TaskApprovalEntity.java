@@ -25,9 +25,10 @@ public class TaskApprovalEntity {
     @Enumerated(EnumType.STRING)
     private ApprovalStatus status;
 
-    private Integer approvalOrder; // orden jerárquico
+    private Integer approvalOrder;
 
     private LocalDateTime actionDate;
 
+    @Column(length = 255)
     private String comments;
 }
