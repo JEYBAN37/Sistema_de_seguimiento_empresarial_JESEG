@@ -1,7 +1,5 @@
 package com.jeseg.admin_system.task.infrastructure.entity;
 import com.jeseg.admin_system.company.infrastructure.entity.CompanyEntity;
-import com.jeseg.admin_system.hierarchyNode.infrastructure.entity.HierarchyNodeEntity;
-import com.jeseg.admin_system.role.infrastructure.entity.RoleEntity;
 import com.jeseg.admin_system.task.domain.dto.TaskPriority;
 import com.jeseg.admin_system.user.infrastructure.entity.UserJepegEntity;
 import jakarta.persistence.*;

@@ -1,8 +1,7 @@
 package com.jeseg.admin_system.task.infrastructure.entity;
-
-import com.jeseg.admin_system.user.infrastructure.entity.UserJepegEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import com.jeseg.admin_system.user.infrastructure.entity.UserJepegEntity;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;

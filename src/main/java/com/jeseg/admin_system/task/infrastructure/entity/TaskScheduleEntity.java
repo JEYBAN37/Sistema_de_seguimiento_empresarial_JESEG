@@ -1,11 +1,14 @@
 package com.jeseg.admin_system.task.infrastructure.entity;
 
+import com.jeseg.admin_system.task.domain.dto.RecurrenceType;
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "task_schedules")
+@Data
 public class TaskScheduleEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
