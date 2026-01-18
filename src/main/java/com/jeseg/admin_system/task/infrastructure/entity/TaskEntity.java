@@ -43,9 +43,14 @@ public class TaskEntity {
     @ManyToOne
     private UserJepegEntity createdBy;
 
+    private LocalDate createdAt;
+
+    private LocalDate updatedAt;
+
     @Enumerated(EnumType.STRING)
     private TaskPriority priority;
 
+    private String anexes;
 
     private LocalDate startDate;
     private LocalDate endDate;
