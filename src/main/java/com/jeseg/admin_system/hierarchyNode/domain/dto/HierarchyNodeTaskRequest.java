@@ -9,7 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class HierarchyResponse {
-    private Long id;
-    private String nombre;
+public class HierarchyNodeTaskRequest {
+    private Long idUser;
+    private Long idHierarchyNode;
+    private Long idCompany;
 }

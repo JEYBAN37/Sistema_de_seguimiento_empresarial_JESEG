@@ -2,6 +2,8 @@ package com.jeseg.admin_system.hierarchyNode.domain.usecase;
 
 import com.jeseg.admin_system.hierarchyNode.domain.dto.HierarchyNodeCreateRequest;
 import com.jeseg.admin_system.hierarchyNode.domain.dto.HierarchyNodeResponse;
+import com.jeseg.admin_system.hierarchyNode.domain.dto.HierarchyNodeTaskRequest;
+import com.jeseg.admin_system.hierarchyNode.domain.dto.HierarchyNodeTaskResponse;
 import com.jeseg.admin_system.hierarchyNode.domain.intreface.HierarchyNodeInterface;
 import com.jeseg.admin_system.user.domain.dto.UserCreateRequest;
 import com.jeseg.admin_system.user.domain.intreface.UserInterface;
@@ -19,6 +21,10 @@ public class HierarchyNodeUseCase {
 
     public  List<HierarchyNodeResponse> getStructure (Long id){
         return hierarchyNodeInterface.getResumenHierarchy(id);
+    }
+
+    public HierarchyNodeTaskResponse getFlatStructure(Long request ){
+        return hierarchyNodeInterface.getStructureTask(request);
     }
 
 

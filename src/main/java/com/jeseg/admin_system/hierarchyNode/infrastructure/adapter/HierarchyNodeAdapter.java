@@ -1,10 +1,8 @@
 package com.jeseg.admin_system.hierarchyNode.infrastructure.adapter;
 
+import com.jeseg.admin_system.application.ex.BusinessException;
 import com.jeseg.admin_system.company.infrastructure.repository.CompanyRepository;
-import com.jeseg.admin_system.hierarchyNode.domain.dto.HierarchyCountResponse;
-import com.jeseg.admin_system.hierarchyNode.domain.dto.HierarchyEmployee;
-import com.jeseg.admin_system.hierarchyNode.domain.dto.HierarchyNodeCreateRequest;
-import com.jeseg.admin_system.hierarchyNode.domain.dto.HierarchyNodeResponse;
+import com.jeseg.admin_system.hierarchyNode.domain.dto.*;
 import com.jeseg.admin_system.hierarchyNode.domain.intreface.HierarchyNodeInterface;
 import com.jeseg.admin_system.hierarchyNode.infrastructure.entity.HierarchyNodeEntity;
 import com.jeseg.admin_system.hierarchyNode.infrastructure.repository.HierarchyNodeRepository;
@@ -143,6 +141,23 @@ public class HierarchyNodeAdapter implements HierarchyNodeInterface {
                 .toList();
     }
 
+    @Override
+    public HierarchyNodeTaskResponse getStructureTask(Long idHierarchyNode) {
+
+        if(idHierarchyNode == null) {
+            throw BusinessException.Type.ERROR_ID_USUARIO_NULO.build();
+        }
+
+        List<NodeResponse> team = hierarchyNodeRepository.findSubordinatesWithUsers(idHierarchyNode);
+
+        List<NodeResponse> chip = hierarchyNodeRepository.findSupervisorAndPeers(idHierarchyNode);
+
+
+        return HierarchyNodeTaskResponse.builder()
+                .subordinados(team)
+                .supervisores(chip)
+                .build();
+    }
 
 
 }

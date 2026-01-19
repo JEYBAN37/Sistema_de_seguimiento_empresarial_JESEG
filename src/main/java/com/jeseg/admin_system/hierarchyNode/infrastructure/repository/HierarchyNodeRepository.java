@@ -1,6 +1,7 @@
 package com.jeseg.admin_system.hierarchyNode.infrastructure.repository;
 
 import com.jeseg.admin_system.hierarchyNode.domain.dto.HierarchyCountResponse;
+import com.jeseg.admin_system.hierarchyNode.domain.dto.NodeResponse;
 import com.jeseg.admin_system.hierarchyNode.infrastructure.entity.HierarchyNodeEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -41,4 +42,21 @@ public interface HierarchyNodeRepository extends JpaRepository<HierarchyNodeEnti
             "AND h.users IS EMPTY " +
             "ORDER BY h.name ASC")
     List<HierarchyNodeEntity> findAllAvailableNodes(@Param("companyId") Long companyId);
+
+
+    @Query("SELECT new com.jeseg.admin_system.hierarchyNode.domain.dto.NodeResponse(" +
+            "n.id, n.name, u.id, u.nombreCompleto) " +
+            "FROM HierarchyNodeEntity n " +
+            "LEFT JOIN n.users u " +
+            "WHERE n.parent.id = :nodeId")
+    List<NodeResponse> findSubordinatesWithUsers(@Param("nodeId") Long nodeId);
+
+    @Query("SELECT new com.jeseg.admin_system.hierarchyNode.domain.dto.NodeResponse(" +
+            "node.id, node.name, u.id, u.nombreCompleto) " +
+            "FROM HierarchyNodeEntity me " +
+            "JOIN me.parent supervisor " +
+            "JOIN HierarchyNodeEntity node ON (node.id = supervisor.id OR node.parent.id = supervisor.id) " +
+            "LEFT JOIN node.users u " +
+            "WHERE me.id = :nodeId")
+    List<NodeResponse> findSupervisorAndPeers(@Param("nodeId") Long nodeId);
 }

@@ -14,6 +14,7 @@ public class BusinessException extends ApplicationException {
 
     public enum Type {
         ERROR_BASE(new Error(CodigosErrorNegocio.NEGOCIO_1, TipoError.NEGOCIO, "Error Mensaje Corto", "descripcion especifica del error")),
+        ERROR_ID_USUARIO_NULO(new Error(CodigosErrorNegocio.NEGOCIO_2, TipoError.NEGOCIO, "Error ID Usuario Nulo", "El ID del usuario no puede ser nulo")),
         ERROR_GUARDAR_COMPANIA(new Error(CodigosErrorNegocio.NEGOCIO_2, TipoError.NEGOCIO, "Error al guardar", "Hay un error al guardar la compañia")),
         ERROR_GUARDAR_ROLE_NOMBRE_REPETIDO(new Error(CodigosErrorNegocio.NEGOCIO_2, TipoError.NEGOCIO, "Error al guardar", "Tienes roles duplicados")),
         ERROR_GUARDAR_COMPANIA_LOGO_VACIO(new Error(CodigosErrorNegocio.NEGOCIO_2, TipoError.NEGOCIO, "Error al guardar", "El logo de la compañia no puede estar vacio")),
@@ -36,6 +37,8 @@ public class BusinessException extends ApplicationException {
         ERROR_GUARDAR_TASK(new Error(CodigosErrorNegocio.NEGOCIO_2, TipoError.NEGOCIO, "Error al guardar tarea no existe node", "La tarea no existe")),
         ERROR_GUARDAR_APPROVAL(new Error(CodigosErrorNegocio.NEGOCIO_2, TipoError.NEGOCIO, "Error al guardar la aprobacion no existe", "La aprobacion no existe")),
         ERROR_VERIFICAR_CARGO_NO_ENCONTRADO_NINUNO (new Error(CodigosErrorNegocio.NEGOCIO_2, TipoError.NEGOCIO, "Error al verificar cargo", "El cargo no fue encontrado")),
+        ERROR_ID_EMPRESA_NULO(new Error(CodigosErrorNegocio.NEGOCIO_2, TipoError.NEGOCIO, "Error ID Empresa Nulo", "El ID de la empresa no puede ser nulo")),
+        ERROR_ID_TAREA_NULO(new Error(CodigosErrorNegocio.NEGOCIO_2, TipoError.NEGOCIO, "Error ID Tarea Nulo", "El ID de la tarea no puede ser nulo")),
         ERROR_CONSULTANTE_NULL(new Error(CodigosErrorNegocio.NEGOCIO_3, TipoError.NEGOCIO, "Consultante nulo", "El consultante no puede ser nulo")),;
 
         private final Error error;
