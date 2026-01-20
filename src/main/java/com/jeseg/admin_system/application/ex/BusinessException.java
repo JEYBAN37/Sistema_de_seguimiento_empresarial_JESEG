@@ -38,6 +38,7 @@ public class BusinessException extends ApplicationException {
         ERROR_GUARDAR_APPROVAL(new Error(CodigosErrorNegocio.NEGOCIO_2, TipoError.NEGOCIO, "Error al guardar la aprobacion no existe", "La aprobacion no existe")),
         ERROR_VERIFICAR_CARGO_NO_ENCONTRADO_NINUNO (new Error(CodigosErrorNegocio.NEGOCIO_2, TipoError.NEGOCIO, "Error al verificar cargo", "El cargo no fue encontrado")),
         ERROR_ID_EMPRESA_NULO(new Error(CodigosErrorNegocio.NEGOCIO_2, TipoError.NEGOCIO, "Error ID Empresa Nulo", "El ID de la empresa no puede ser nulo")),
+        ERROR_GUARDAR_TAREA_NODO_NO_EXISTE(new Error(CodigosErrorNegocio.NEGOCIO_2, TipoError.NEGOCIO, "Error al guardar tarea no existe node", "El nodo de la jerarquia no) existe")),
         ERROR_ID_TAREA_NULO(new Error(CodigosErrorNegocio.NEGOCIO_2, TipoError.NEGOCIO, "Error ID Tarea Nulo", "El ID de la tarea no puede ser nulo")),
         ERROR_CONSULTANTE_NULL(new Error(CodigosErrorNegocio.NEGOCIO_3, TipoError.NEGOCIO, "Consultante nulo", "El consultante no puede ser nulo")),;
 

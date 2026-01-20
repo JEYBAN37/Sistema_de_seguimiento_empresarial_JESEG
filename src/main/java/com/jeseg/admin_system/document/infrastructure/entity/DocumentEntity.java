@@ -30,4 +30,6 @@ public class DocumentEntity {
 
     @ManyToOne
     private TaskEntity task;
+
+    private String typeAttachment;
 }

@@ -1,5 +1,6 @@
 package com.jeseg.admin_system.task.infrastructure.entity;
 import com.jeseg.admin_system.company.infrastructure.entity.CompanyEntity;
+import com.jeseg.admin_system.hierarchyNode.infrastructure.entity.HierarchyNodeEntity;
 import com.jeseg.admin_system.task.domain.dto.TaskPriority;
 import com.jeseg.admin_system.user.infrastructure.entity.UserJepegEntity;
 import jakarta.persistence.*;
@@ -41,7 +42,7 @@ public class TaskEntity {
     private CompanyEntity company;
 
     @ManyToOne
-    private UserJepegEntity createdBy;
+    private HierarchyNodeEntity createdBy;
 
     private LocalDate createdAt;
 
@@ -49,8 +50,6 @@ public class TaskEntity {
 
     @Enumerated(EnumType.STRING)
     private TaskPriority priority;
-
-    private String anexes;
 
     private LocalDate startDate;
     private LocalDate endDate;
