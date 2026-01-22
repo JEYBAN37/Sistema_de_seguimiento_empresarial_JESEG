@@ -14,4 +14,5 @@ public class NodeResponse {
     private String name;         // 2. sibling.name / n.name (MOVIDO AQUÍ)
     private Long idUser;         // 3. u.id
     private String nombreCompleto; // 4. u.nombreCompleto
+    private String roleName;
 }
