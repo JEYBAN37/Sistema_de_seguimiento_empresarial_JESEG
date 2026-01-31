@@ -25,7 +25,6 @@ public class UserController {
     @PostMapping(value = "/upload-csv", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> uploadUsersCsv(@Valid @ModelAttribute MultipartFile fileContent) {
         userService.uploadUsersFromCsv(fileContent);
-        System.out.println("Archivo procesado correctamente");
         return ResponseEntity.ok(Collections.singletonMap("message", "Operación Exitosa"));
     }
 

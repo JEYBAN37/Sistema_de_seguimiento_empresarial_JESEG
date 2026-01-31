@@ -15,4 +15,8 @@ public class DocumentUseCases {
     public void createDocument(DocumentCreateRequest roleCreateRequest) {
         documentInterface.createDocument(roleCreateRequest);
     }
+
+    public void createAnexos(DocumentCreateRequest documentCreateRequest) {
+       documentInterface.loadAnexos(documentCreateRequest);
+    }
 }

@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface TaskScheduleRepositry extends JpaRepository<TaskScheduleEntity, Long> {
+public interface TaskScheduleRepository extends JpaRepository<TaskScheduleEntity, Long> {
 }

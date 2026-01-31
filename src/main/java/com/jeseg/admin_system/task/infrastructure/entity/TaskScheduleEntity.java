@@ -1,28 +1,30 @@
 package com.jeseg.admin_system.task.infrastructure.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.jeseg.admin_system.task.domain.dto.RecurrenceType;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "task_schedules")
-@Data
+@Getter
+@Setter
+@Builder
 public class TaskScheduleEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
+    @ToString.Exclude // <--- ESTO EVITA EL BUCLE INFINITO
+    @JsonBackReference
     private TaskEntity task;
 
     @Enumerated(EnumType.STRING)
     private RecurrenceType recurrenceType;
     // DAILY, WEEKLY, MONTHLY
-
-    private String recurrenceConfig;
-    // JSON: días del mes, semanas, etc.
 
     private LocalDate startDate;
     private LocalDate endDate;

@@ -5,16 +5,16 @@ import com.jeseg.admin_system.task.domain.dto.TaskPriority;
 import com.jeseg.admin_system.user.infrastructure.entity.UserJepegEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "tasks")
-@Data
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -28,7 +28,7 @@ public class TaskEntity {
     @NotBlank(message = "El titulo es obligatorio")
     private String title;
 
-    @Column(length = 255, nullable = false)
+    @Column(length = 500, nullable = false)
     @NotBlank(message = "descripcion es obligatoria")
     private String description;
 
@@ -54,4 +54,9 @@ public class TaskEntity {
     private LocalDate startDate;
     private LocalDate endDate;
 
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<TaskAssignmentEntity> assignments; // Cambia List por Set
+
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<TaskApprovalEntity> approvals; // Cambia List por Set
 }

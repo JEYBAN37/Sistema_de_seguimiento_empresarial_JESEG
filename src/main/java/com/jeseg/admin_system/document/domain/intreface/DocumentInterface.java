@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface DocumentInterface {
     void createDocument(DocumentCreateRequest documentCreateRequest );
+    void loadAnexos (DocumentCreateRequest documentCreateRequest);
 }

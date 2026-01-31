@@ -20,4 +20,8 @@ public class DocumentService {
         }
     }
 
+    public void saveAnexos (DocumentCreateRequest documentCreateRequest) {
+            documentUseCases.createAnexos(documentCreateRequest);
+    }
+
 }

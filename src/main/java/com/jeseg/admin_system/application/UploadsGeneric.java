@@ -29,7 +29,7 @@ public class UploadsGeneric {
             Files.write(path, file.getBytes());
 
             // 3. Crear la URL para la base de datos
-            return "uploads/csv/" + fileName;
+            return uploadDir + fileName;
         } catch (Exception e) {
             throw BusinessException.Type.ERROR_GUARDAR_COMPANIA.build(e);
         }

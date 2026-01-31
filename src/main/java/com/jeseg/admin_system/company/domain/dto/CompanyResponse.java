@@ -6,5 +6,5 @@ import lombok.Data;
 @Builder
 @Data
 public class CompanyResponse {
-    Long id;
+    private Long id;
 }

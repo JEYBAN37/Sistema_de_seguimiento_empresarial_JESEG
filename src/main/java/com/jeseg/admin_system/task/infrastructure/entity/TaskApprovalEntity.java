@@ -1,16 +1,21 @@
 package com.jeseg.admin_system.task.infrastructure.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.jeseg.admin_system.hierarchyNode.infrastructure.entity.HierarchyNodeEntity;
 import com.jeseg.admin_system.task.domain.dto.ApprovalStatus;
 import jakarta.persistence.*;
-import lombok.Data;
-import org.springframework.scheduling.config.Task;
+import lombok.*;
+
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "task_approvals")
-@Data
+@Getter
+@Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class TaskApprovalEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
