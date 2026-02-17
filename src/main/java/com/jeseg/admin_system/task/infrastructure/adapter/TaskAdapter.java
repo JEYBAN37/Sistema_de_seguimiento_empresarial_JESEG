@@ -18,11 +18,16 @@ import com.jeseg.admin_system.task.infrastructure.repository.TaskApprovalReposit
 import com.jeseg.admin_system.task.infrastructure.repository.TaskAssignmentRepository;
 import com.jeseg.admin_system.task.infrastructure.repository.TaskRepository;
 import com.jeseg.admin_system.task.infrastructure.repository.TaskScheduleRepository;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -58,9 +63,9 @@ public class TaskAdapter implements TaskInterface {
         TaskEntity task = persistMainTask(request, company, creator);
 
         // 3. Persistir Programación (Si aplica)
-        if (request.getRecurrenceType() != null) {
-            saveTaskSchedule(request, task);
-        }
+        //if (request.getRecurrenceType() != null) {
+            //saveTaskSchedule(request, task);
+        //}
 
         // 4. Persistir Asignaciones
         if (request.getAssignedNodes() != null && !request.getAssignedNodes().isEmpty()) {
@@ -83,23 +88,39 @@ public class TaskAdapter implements TaskInterface {
         return taskRepository.save(TaskEntity.builder()
                 .title(request.getTitle())
                 .description(request.getDescription())
-                .status(request.getStatus())
+                .status("CREATED")
                 .approvalRequired(request.getApprovalRequired() != null)
                 .company(company)
                 .createdBy(creator)
-                .createdAt(request.getCreatedAt())
-                .startDate(request.getStartDate())
-                .endDate(request.getEndDate())
+                .createdAt(convertTime(request.getCreatedAt()))
+                .startDate(convertTime(request.getStart()))
+                .endDate(convertTime(request.getEnd()))
+                .placeOrLocation(request.getUbicacion())
                 .priority(TaskPriority.fromCode(request.getPriority()))
                 .build());
+    }
+
+    private LocalDateTime convertTime(List<Integer> a) {
+        if (a == null || a.size() < 3) return null;
+
+        int year = a.get(0);
+        int month = a.get(1);
+        int day = a.get(2);
+        int hour = a.size() > 3 ? a.get(3) : 0;
+        int minute = a.size() > 4 ? a.get(4) : 0;
+
+        LocalDateTime ldt = LocalDateTime.of(year, month, day, hour, minute);
+        ZonedDateTime zdt = ldt.atZone(ZoneId.of("America/Bogota"));
+
+        return zdt.toLocalDateTime();
     }
 
     private void saveTaskSchedule(TaskCreateRequest request, TaskEntity task) {
         TaskScheduleEntity schedule = TaskScheduleEntity.builder()
                 .task(task)
                 .recurrenceType(RecurrenceType.fromCode(request.getRecurrenceType()))
-                .startDate(request.getStartDate())
-                .endDate(request.getEndDate())
+                //.startDate(request.getStart())
+                //.endDate(request.getEnd())
                 .build();
         taskScheduleRepository.save(schedule);
     }
@@ -175,8 +196,14 @@ public class TaskAdapter implements TaskInterface {
 
 
             if (filters.getRecurrence() != null && filters.getRecurrence()) {
-                // Esto hace un JOIN con la tabla de horarios
-                root.join("task_schedules");
+                // Esto hace un JOIN con la colección de horarios (usa el nombre de la propiedad Java)
+                root.join("taskSchedules", JoinType.INNER);
+            }
+
+            if (filters.getRecurrence() == null) {
+                // Esto hace un LEFT JOIN con la colección de horarios y filtra las tareas sin horarios asociados
+                Join<TaskEntity, TaskScheduleEntity> scheduleJoin = root.join("taskSchedules", JoinType.LEFT);
+                predicates.add(cb.isNull(scheduleJoin.get("id")));
             }
 
             return cb.and(predicates.toArray(new Predicate[0]));
@@ -198,12 +225,15 @@ public class TaskAdapter implements TaskInterface {
                         .title(t.getTitle())
                         .description(t.getDescription())
                         .status(t.getStatus())
-                        .createdAt(t.getCreatedAt())
+                        //.createdAt(t.getCreatedAt())
                         .priority(t.getPriority() != null ? t.getPriority().name() : null)
-                        .startDate(t.getStartDate())
-                        .endDate(t.getEndDate())
+                        //.startDate(t.getStartDate())
+                        //.endDate(t.getEndDate())
                         .approverNodes(mapToNodeResponse(t.getApprovals()))
                         .assignedNodes(mapToNodeResponseAssignments(t.getAssignments()))
+                        .schedule(t.getTaskSchedules() != null && !t.getTaskSchedules().isEmpty()
+                                ? t.getTaskSchedules().iterator().next()
+                                : null)
                         .build())
                 .toList();
     }

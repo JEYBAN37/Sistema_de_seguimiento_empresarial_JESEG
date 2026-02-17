@@ -1,6 +1,7 @@
 package com.jeseg.admin_system.task.domain.dto;
 
 import com.jeseg.admin_system.hierarchyNode.domain.dto.NodeResponse;
+import com.jeseg.admin_system.task.infrastructure.entity.TaskScheduleEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,4 +26,5 @@ public class TaskCheckResponse {
     private LocalDate endDate;
     private List<NodeResponse> assignedNodes;
     private List<NodeResponse> approverNodes;
+    private TaskScheduleEntity schedule;
 }

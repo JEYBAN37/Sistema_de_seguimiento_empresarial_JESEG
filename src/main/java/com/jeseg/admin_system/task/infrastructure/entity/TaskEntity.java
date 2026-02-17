@@ -2,13 +2,13 @@ package com.jeseg.admin_system.task.infrastructure.entity;
 import com.jeseg.admin_system.company.infrastructure.entity.CompanyEntity;
 import com.jeseg.admin_system.hierarchyNode.infrastructure.entity.HierarchyNodeEntity;
 import com.jeseg.admin_system.task.domain.dto.TaskPriority;
-import com.jeseg.admin_system.user.infrastructure.entity.UserJepegEntity;
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Entity
@@ -44,19 +44,32 @@ public class TaskEntity {
     @ManyToOne
     private HierarchyNodeEntity createdBy;
 
-    private LocalDate createdAt;
+    @Column(name = "created_at", columnDefinition = "DATETIME")
+    private LocalDateTime createdAt;
 
-    private LocalDate updatedAt;
+    private LocalDateTime updatedAt;
 
     @Enumerated(EnumType.STRING)
     private TaskPriority priority;
 
-    private LocalDate startDate;
-    private LocalDate endDate;
+    @Column(name = "start_date", columnDefinition = "DATETIME")
+    private LocalDateTime startDate;
 
+    @Column(name = "end_date", columnDefinition = "DATETIME")
+    private LocalDateTime endDate;
+
+    private String placeOrLocation;
+
+    @JsonManagedReference("task-assignments")
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<TaskAssignmentEntity> assignments; // Cambia List por Set
 
+    @JsonManagedReference("task-approvals")
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<TaskApprovalEntity> approvals; // Cambia List por Set
+
+    // Relationship to task schedules (mappedBy = "task" in TaskScheduleEntity)
+    @JsonManagedReference("task-schedules")
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<TaskScheduleEntity> taskSchedules;
 }

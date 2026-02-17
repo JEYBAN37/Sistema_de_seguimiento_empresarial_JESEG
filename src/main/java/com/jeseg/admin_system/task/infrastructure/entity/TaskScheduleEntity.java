@@ -12,14 +12,15 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class TaskScheduleEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @ToString.Exclude // <--- ESTO EVITA EL BUCLE INFINITO
-    @JsonBackReference
+    @JsonBackReference("task-schedules")
     private TaskEntity task;
 
     @Enumerated(EnumType.STRING)

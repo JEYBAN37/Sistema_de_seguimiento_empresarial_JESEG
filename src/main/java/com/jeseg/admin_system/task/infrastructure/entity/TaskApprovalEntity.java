@@ -22,6 +22,7 @@ public class TaskApprovalEntity {
     private Long id;
 
     @ManyToOne
+    @JsonBackReference("task-approvals")
     private TaskEntity task;
 
     @ManyToOne
