@@ -15,4 +15,5 @@ public class NodeResponse {
     private Long idUser;         // 3. u.id
     private String nombreCompleto; // 4. u.nombreCompleto
     private String roleName;
+    private String celular;
 }

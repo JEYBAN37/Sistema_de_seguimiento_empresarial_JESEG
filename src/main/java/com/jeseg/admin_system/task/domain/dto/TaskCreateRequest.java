@@ -1,5 +1,7 @@
 package com.jeseg.admin_system.task.domain.dto;
 
+import com.jeseg.admin_system.task.infrastructure.entity.TaskCommentEntity;
+import jakarta.persistence.ManyToMany;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -12,7 +14,7 @@ public class TaskCreateRequest {
     private List<Integer> end;
     private String description;
     private String ubicacion;
-
+    private String comment;
 
     private List<Long> approvalRequired;
     private List<Long> assignedNodes;

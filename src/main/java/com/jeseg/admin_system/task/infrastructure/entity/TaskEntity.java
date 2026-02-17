@@ -72,4 +72,7 @@ public class TaskEntity {
     @JsonManagedReference("task-schedules")
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<TaskScheduleEntity> taskSchedules;
+
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<TaskCommentEntity> comments; // Cambia List por Set
 }

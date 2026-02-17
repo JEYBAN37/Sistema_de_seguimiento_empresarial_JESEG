@@ -45,7 +45,7 @@ public interface HierarchyNodeRepository extends JpaRepository<HierarchyNodeEnti
 
 
     @Query("SELECT new com.jeseg.admin_system.hierarchyNode.domain.dto.NodeResponse(" +
-            "n.id, n.name, u.id, u.nombreCompleto, r.name) " + // Cambiado r.rol a r.name
+            "n.id, n.name, u.id, u.nombreCompleto, r.name, u.telefono) " + // Cambiado r.rol a r.name
             "FROM HierarchyNodeEntity n " +
             "LEFT JOIN n.users u " +
             "LEFT JOIN u.role r " + // Unimos con la tabla de roles
@@ -54,7 +54,7 @@ public interface HierarchyNodeRepository extends JpaRepository<HierarchyNodeEnti
 
     // 2. Supervisor y Compañeros con su Rol
     @Query("SELECT new com.jeseg.admin_system.hierarchyNode.domain.dto.NodeResponse(" +
-            "node.id, node.name, u.id, u.nombreCompleto, r.name) " +
+            "node.id, node.name, u.id, u.nombreCompleto, r.name, u.telefono) " +
             "FROM HierarchyNodeEntity me " +
             "JOIN me.parent supervisor " +
             "JOIN HierarchyNodeEntity node ON (node.id = supervisor.id OR node.parent.id = supervisor.id) " +

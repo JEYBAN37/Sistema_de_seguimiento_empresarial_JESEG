@@ -10,14 +10,8 @@ import com.jeseg.admin_system.task.domain.dto.*;
 import com.jeseg.admin_system.task.domain.intreface.TaskInterface;
 
 
-import com.jeseg.admin_system.task.infrastructure.entity.TaskApprovalEntity;
-import com.jeseg.admin_system.task.infrastructure.entity.TaskAssignmentEntity;
-import com.jeseg.admin_system.task.infrastructure.entity.TaskEntity;
-import com.jeseg.admin_system.task.infrastructure.entity.TaskScheduleEntity;
-import com.jeseg.admin_system.task.infrastructure.repository.TaskApprovalRepository;
-import com.jeseg.admin_system.task.infrastructure.repository.TaskAssignmentRepository;
-import com.jeseg.admin_system.task.infrastructure.repository.TaskRepository;
-import com.jeseg.admin_system.task.infrastructure.repository.TaskScheduleRepository;
+import com.jeseg.admin_system.task.infrastructure.entity.*;
+import com.jeseg.admin_system.task.infrastructure.repository.*;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
@@ -42,6 +36,7 @@ public class TaskAdapter implements TaskInterface {
     private final TaskAssignmentRepository taskAssignmentRepository;
     private final TaskApprovalRepository taskApprovalRepository;
     private final TaskScheduleRepository taskScheduleRepository;
+    private final TaskCommentRepository taskCommentRepository;
 
 
     @Override
@@ -61,6 +56,13 @@ public class TaskAdapter implements TaskInterface {
 
         // 2. Persistir Tarea Principal
         TaskEntity task = persistMainTask(request, company, creator);
+
+
+        // 3. Si existe novedad agrega novedad a la tabla de novedades
+        if (request.getComment() != null && !request.getComment().isEmpty()) {
+            persistantComment(request.getComment(), task, creator);
+        }
+
 
         // 3. Persistir Programación (Si aplica)
         //if (request.getRecurrenceType() != null) {
@@ -83,6 +85,17 @@ public class TaskAdapter implements TaskInterface {
     }
 
     // --- MÉTODOS PRIVADOS DE SOPORTE ---
+    private void persistantComment(String novedad, TaskEntity task, HierarchyNodeEntity creator) {
+
+        TaskCommentEntity comment = TaskCommentEntity.builder()
+                .task(task)
+                .comment(novedad)
+                .createdAt(LocalDateTime.now())
+                .createdBy(creator)
+                .build();
+
+        taskCommentRepository.save(comment);
+    }
 
     private TaskEntity persistMainTask(TaskCreateRequest request, CompanyEntity company, HierarchyNodeEntity creator) {
         return taskRepository.save(TaskEntity.builder()
@@ -224,16 +237,27 @@ public class TaskAdapter implements TaskInterface {
                         .id(t.getId())
                         .title(t.getTitle())
                         .description(t.getDescription())
+                        .ubicacion(t.getPlaceOrLocation())
+                        .comments(t.getTaskSchedules() != null && !t.getTaskSchedules().isEmpty() ? mapToCommentResponse(t.getComments()) : null)
                         .status(t.getStatus())
+                        .approvalRequired(mapToNodeResponse(t.getApprovals()))
+                        .assignedNodes(mapToNodeResponseAssignments(t.getAssignments()))
                         //.createdAt(t.getCreatedAt())
-                        .priority(t.getPriority() != null ? t.getPriority().name() : null)
+                        //.priority(t.getPriority() != null ? t.getPriority().name() : null)
                         //.startDate(t.getStartDate())
                         //.endDate(t.getEndDate())
-                        .approverNodes(mapToNodeResponse(t.getApprovals()))
-                        .assignedNodes(mapToNodeResponseAssignments(t.getAssignments()))
-                        .schedule(t.getTaskSchedules() != null && !t.getTaskSchedules().isEmpty()
-                                ? t.getTaskSchedules().iterator().next()
-                                : null)
+                        .build())
+                .toList();
+    }
+
+    private List<CommendResponse> mapToCommentResponse(Set<TaskCommentEntity> comments) {
+        if (comments == null) return null;
+
+        return comments.stream()
+                .map(c -> CommendResponse.builder()
+                        .comment(c.getComment())
+                        //.createdAt(c.getCreatedAt())
+                        .createdBy(c.getCreatedBy().getName())
                         .build())
                 .toList();
     }
@@ -274,10 +298,8 @@ public class TaskAdapter implements TaskInterface {
                                 ? n.getEmpleado().getUsers().get(0).getNombreCompleto()
                                 : null)
                         .roleName(n.getEmpleado().getUsers() != null  && !n.getEmpleado().getUsers().isEmpty() ? n.getEmpleado().getUsers().get(0).getRole().getName() : null)
+                        .celular(n.getEmpleado().getUsers() != null  && !n.getEmpleado().getUsers().isEmpty() ? n.getEmpleado().getUsers().get(0).getTelefono() : null)
                         .build())
                 .toList();
     }
-
-
-
 }
