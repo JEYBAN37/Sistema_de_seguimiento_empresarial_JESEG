@@ -128,6 +128,15 @@ public class TaskAdapter implements TaskInterface {
         return zdt.toLocalDateTime();
     }
 
+    private List<Integer> convertTimeToList(LocalDateTime dateTime) {
+        if (dateTime == null) return null;
+
+        ZonedDateTime zdt = dateTime.atZone(ZoneId.of("America/Bogota"));
+        LocalDateTime ldt = zdt.toLocalDateTime();
+
+        return List.of(ldt.getYear(), ldt.getMonthValue(), ldt.getDayOfMonth(), ldt.getHour(), ldt.getMinute());
+    }
+
     private void saveTaskSchedule(TaskCreateRequest request, TaskEntity task) {
         TaskScheduleEntity schedule = TaskScheduleEntity.builder()
                 .task(task)
@@ -242,10 +251,9 @@ public class TaskAdapter implements TaskInterface {
                         .status(t.getStatus())
                         .approvalRequired(mapToNodeResponse(t.getApprovals()))
                         .assignedNodes(mapToNodeResponseAssignments(t.getAssignments()))
-                        //.createdAt(t.getCreatedAt())
-                        //.priority(t.getPriority() != null ? t.getPriority().name() : null)
-                        //.startDate(t.getStartDate())
-                        //.endDate(t.getEndDate())
+                        .priority(t.getPriority() != null ? t.getPriority().name() : null)
+                        .start(convertTimeToList(t.getStartDate()))
+                        .end(convertTimeToList(t.getEndDate()))
                         .build())
                 .toList();
     }

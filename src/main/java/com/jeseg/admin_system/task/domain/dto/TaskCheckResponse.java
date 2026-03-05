@@ -22,6 +22,7 @@ public class TaskCheckResponse {
     private String ubicacion;
     private List<CommendResponse> comments;
     private String status;
+    private String priority;
 
     private List<NodeResponse> approvalRequired;
     private List<NodeResponse> assignedNodes;
