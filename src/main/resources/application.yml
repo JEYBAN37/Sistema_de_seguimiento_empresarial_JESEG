@@ -9,9 +9,9 @@ spring:
 
   datasource:
     primary:
-      jdbc-url: jdbc:mysql://localhost:3306/agsolutic_gestor_aps?serverTimezone=America/Bogota
-      username: root
-      password:
+      jdbc-url: jdbc:mysql://195.250.27.25:3306/agsolutic_aps_administrador?serverTimezone=America/Bogota
+      username: agsolutic_esteban
+      password: "P@sto1945"
       driver-class-name: com.mysql.cj.jdbc.Driver
 
     secondary:
