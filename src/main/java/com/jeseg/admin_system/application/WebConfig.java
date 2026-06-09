@@ -34,7 +34,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .csrf(AbstractHttpConfigurer::disable)
 
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/health").permitAll()
+                        .requestMatchers("/api/v3/api/health").permitAll()
                         .requestMatchers("/api/v3/**").authenticated()
                         .anyRequest().permitAll()
                 )
@@ -74,5 +74,13 @@ public class WebConfig implements WebMvcConfigurer {
         // Aplicar estas reglas de CORS a todos los endpoints de la app
         source.registerCorsConfiguration("/**", configuration);
         return source;
+    }
+
+    @Override
+    public void configurePathMatch(org.springframework.web.servlet.config.annotation.PathMatchConfigurer configurer) {
+        // 🚀 Esto le clava el prefijo /api/v3 a absolutamente TODO controlador que use @RestController
+        configurer.addPathPrefix("/api/v3",
+                c -> c.isAnnotationPresent(org.springframework.web.bind.annotation.RestController.class)
+        );
     }
 }

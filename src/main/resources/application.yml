@@ -2,6 +2,10 @@ spring:
   application:
     name: admin-system
 
+  mvc:
+    pathmatch:
+      base-path: /api/v3
+
   servlet:
     multipart:
       max-file-size: 10MB
@@ -24,7 +28,6 @@ spring:
         connection-timeout: 30000
         idle-timeout: 60000
         pool-name: HikariPoolSecondary
-
 
   security:
     user:
