@@ -47,6 +47,7 @@ public class PrimaryDataSourceConfig {
             EntityManagerFactoryBuilder builder) {
 
         Map<String, Object> properties = new HashMap<>();
+        properties.put("hibernate.dialect", "org.hibernate.dialect.MySQLDialect");
         properties.put("hibernate.hbm2ddl.auto", "update"); // 👈 solo primary
 
         return builder
