@@ -1,0 +1,55 @@
+spring:
+  application:
+    name: admin-system
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+  datasource:
+    primary:
+      jdbc-url: jdbc:mysql://localhost:3306/agsolutic_gestor_aps?serverTimezone=America/Bogota
+      username: root
+      password:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+
+    secondary:
+      jdbc-url: jdbc:mysql://195.250.27.25:3306/agsolutic_alpha_2025?serverTimezone=America/Bogota
+      username: agsolutic_esteban
+      password: "P@sto1945"
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      hikari:
+        maximum-pool-size: 2
+        connection-timeout: 30000
+        idle-timeout: 60000
+        pool-name: HikariPoolSecondary
+
+
+  security:
+    user:
+      name: "aps_pic_relativo"
+      password: "aps@2026V3*"
+
+server:
+  tomcat:
+    max-parameter-count: 10000
+    max-http-form-post-size: 20MB
+  port: 8080
+
+app:
+  security:
+    bcrypt:
+      cost: 10
+
+    allowed-origins:
+      - "http://localhost:3000"
+      - "https://wnqj3f9n-3000.use2.devtunnels.ms"
+
+  tareas-control:
+    hora-limite-tarea: 3       # Si no existe la variable, por defecto será las 18:00
+    hora-limite-finalizacion: 22
+
+  cloudinary:
+    # 🚀 CORREGIDO: Se eliminó el texto del final para evitar errores de parseo
+    url: "cloudinary://584777313572491:ZBqKPMENPHhD74xHknqk5GHM3Jc@dscawg4pa"
