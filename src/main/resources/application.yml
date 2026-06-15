@@ -19,7 +19,7 @@ spring:
       driver-class-name: com.mysql.cj.jdbc.Driver
 
     secondary:
-      jdbc-url: jdbc:mysql://127.0.0.1:3307/agsolutic_alpha_2025?serverTimezone=America/Bogota
+      jdbc-url: jdbc:mysql://195.250.27.25:3306/agsolutic_alpha_2025?serverTimezone=America/Bogota
       username: agsolutic_esteban
       password: "P@sto1945"
       driver-class-name: com.mysql.cj.jdbc.Driver
