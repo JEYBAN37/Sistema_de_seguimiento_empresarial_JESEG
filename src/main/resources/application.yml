@@ -13,13 +13,13 @@ spring:
 
   datasource:
     primary:
-      jdbc-url: jdbc:mysql://195.250.27.25:3306/agsolutic_aps_administrador?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-      username: agsolutic_esteban
-      password: "P@sto1945"
+      jdbc-url: jdbc:mysql://root:yKacOnLKSlAoUhoCFudxJEkXfdmRBDqX@thomas.proxy.rlwy.net:24712/railway?useSSL=false&serverTimezone=America/Bogota
+      username: root
+      password: "yKacOnLKSlAoUhoCFudxJEkXfdmRBDqX"
       driver-class-name: com.mysql.cj.jdbc.Driver
 
     secondary:
-      jdbc-url: jdbc:mysql://195.250.27.25:3306/agsolutic_alpha_2025?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      jdbc-url: jdbc:mysql://127.0.0.1:3307/agsolutic_alpha_2025?serverTimezone=America/Bogota
       username: agsolutic_esteban
       password: "P@sto1945"
       driver-class-name: com.mysql.cj.jdbc.Driver
@@ -36,8 +36,6 @@ spring:
 
   jpa:
     database-platform: org.hibernate.dialect.MySQLDialect
-    hibernate:
-      ddl-auto: none
     generate-ddl: false
 
 server:

@@ -1,5 +1,6 @@
 package com.jeseg.admin_system.application;
 
+import com.jcraft.jsch.Session;
 import jakarta.persistence.EntityManagerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -32,6 +33,8 @@ import java.util.Map;
         transactionManagerRef = "primaryTransactionManager"
 )
 public class PrimaryDataSourceConfig {
+
+
 
     @Bean
     @ConfigurationProperties(prefix = "spring.datasource.primary")
@@ -71,4 +74,5 @@ public class PrimaryDataSourceConfig {
 
         return new JpaTransactionManager(entityManagerFactory);
     }
+
 }
