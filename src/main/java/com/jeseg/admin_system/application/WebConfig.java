@@ -25,6 +25,9 @@ public class WebConfig implements WebMvcConfigurer {
     @Value("${app.security.allowed-origins:http://localhost:3000,https://wnqj3f9n-3000.use2.devtunnels.ms}")
     private List<String> allowedOrigins;
 
+    @Value("${spring.mvc.pathmatch.base-path}")
+    private String apiBasePath;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -34,8 +37,8 @@ public class WebConfig implements WebMvcConfigurer {
                 .csrf(AbstractHttpConfigurer::disable)
 
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v3/api/health").permitAll()
-                        .requestMatchers("/api/v3/**").authenticated()
+                        .requestMatchers(apiBasePath + "/api/health").permitAll()
+                        .requestMatchers(apiBasePath + "/**").authenticated()
                         .anyRequest().permitAll()
                 )
                 .httpBasic(Customizer.withDefaults());
@@ -79,7 +82,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void configurePathMatch(org.springframework.web.servlet.config.annotation.PathMatchConfigurer configurer) {
         // 🚀 Esto le clava el prefijo /api/v3 a absolutamente TODO controlador que use @RestController
-        configurer.addPathPrefix("/api/v3",
+        configurer.addPathPrefix(apiBasePath,
                 c -> c.isAnnotationPresent(org.springframework.web.bind.annotation.RestController.class)
         );
     }

@@ -1,11 +1,14 @@
 package com.jeseg.admin_system.canalizaciones.infrastructure.repository;
 
+import com.jeseg.admin_system.application.ex.BusinessException;
 import com.jeseg.admin_system.canalizaciones.domain.dto.PersonaAskRequest;
 import com.jeseg.admin_system.canalizaciones.infrastructure.entity.Persona;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +36,41 @@ public class PersonaSpecifications {
                 predicates.add(globalOr);
             }
 
+            // 2. Filtro IPS
+            if (filtros.getIps() != null && !filtros.getIps().isEmpty()) {
+                CriteriaBuilder.In<String> in = cb.in(root.get("ips"));
+                for (String ips : filtros.getIps()) {
+                    in.value(ips);
+                }
+                predicates.add(in);
+            } else {
+                throw BusinessException.Type.ERROR_IPS_NO_VACIAS.build();
+            }
+
+            // 3. Periodo de búsqueda
+            if (filtros.getPeriodoBusqueda() != null && !filtros.getPeriodoBusqueda().isEmpty()) {
+                try {
+                    String[] fechas = filtros.getPeriodoBusqueda().split(",");
+                    if (fechas.length != 2) {
+                        throw BusinessException.Type.ERROR_FORMATO_PERIODO_BUSQUEDA_INVALIDO.build();
+                    }
+
+                    DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                    String fechaInicioStr = fechas[0].trim();
+                    String fechaFinStr = fechas[1].trim();
+
+                    LocalDate.parse(fechaInicioStr, fmt);
+                    LocalDate.parse(fechaFinStr, fmt);
+                    predicates.add(cb.between(root.get("fechaRegistro"), fechaInicioStr, fechaFinStr));
+
+                } catch (Exception e) {
+                    System.out.println("Error al parsear el periodo de búsqueda: " + e.getMessage());
+                    throw BusinessException.Type.FECHA_OBLIGATORIA_CONSULTANTE.build();
+                }
+
+            } else {
+                throw BusinessException.Type.ERROR_FORMATO_PERIODO_BUSQUEDA_INVALIDO.build();
+            }
 
             List<Predicate> orPreds = new ArrayList<>();
 

@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Data
 @Getter
 @Setter
@@ -20,4 +22,6 @@ public class PersonaAskRequest {
     //private String caracterizar;
     private String aceptaFormulario;
     private String deteccionTemprana;
+    List<String> ips;
+    private String periodoBusqueda;
 }

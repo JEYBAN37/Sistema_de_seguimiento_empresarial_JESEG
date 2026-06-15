@@ -80,6 +80,16 @@ public class Persona {
     @Column(name = "observacionIps")
     private String observacionIps;
 
+    @Column(name = "fecharegistro")
+    private String fechaRegistro;
+
+    @Column(name = "direccion")
+    private String direccion;
+
+    @Column(name = "barriovereda")
+    private String barrioVereda;
+
+
     //@Column(name = "direccion")
     //private String direccion;
 

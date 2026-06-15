@@ -49,6 +49,12 @@ public class BusinessException extends ApplicationException {
         ERROR_GUARDAR_TAREA_UBICACION_INACTIVA(new Error(CodigosErrorNegocio.NEGOCIO_2, TipoError.NEGOCIO, "Error al guardar tarea transporte no activo", "El EBS no tiene autorización para realizar solicitudes de transporte")),
         ERROR_OPCIONES_FILTRO_PERSONAS_INVALIDAS(new Error(CodigosErrorNegocio.NEGOCIO_2, TipoError.NEGOCIO, "Error al filtrar personas", "Las opciones del son invalidas")),
         ERROR_GUARDAR_TAREA_HORA_ANTERIOR_AL_DIA_ACTUAL(new Error(CodigosErrorNegocio.NEGOCIO_2, TipoError.NEGOCIO, "Error al guardar tarea fecha anterior al dia actual", "La fecha de inicio de la tarea no puede ser anterior al día actual")),
+        ERROR_IPS_NO_VACIAS(new Error(CodigosErrorNegocio.NEGOCIO_2, TipoError.NEGOCIO, "Error al filtrar personas", "La lista de IPS no puede estar vacía")),
+        ERROR_FORMATO_PERIODO_BUSQUEDA_INVALIDO(new Error(CodigosErrorNegocio.NEGOCIO_2, TipoError.NEGOCIO, "Error al filtrar personas", "El formato del periodo de búsqueda es inválido. Se esperan dos fechas separadas por coma (fechaInicio,fechaFin)")),
+        ERROR_PERIODO_BUSQUEDA_INVALIDO(new Error(CodigosErrorNegocio.NEGOCIO_2, TipoError.NEGOCIO, "Error al filtrar personas", "El periodo de búsqueda es inválido. La fecha de inicio debe ser anterior a la fecha de fin")),
+        FECHA_OBLIGATORIA_CONSULTANTE(new Error(CodigosErrorNegocio.NEGOCIO_3, TipoError.NEGOCIO, "Fecha obligatoria para consultante", "La fecha es obligatoria para el consultante")),
+        ERROR_PERSONA_NO_ENCONTRADA(new Error(CodigosErrorNegocio.NEGOCIO_3, TipoError.NEGOCIO, "Persona no encontrada", "No se encontró la persona con los criterios de búsqueda")),
+        ERROR_CAMPOS_PERSONA_NO_VACIOS(new Error(CodigosErrorNegocio.NEGOCIO_3, TipoError.NEGOCIO, "Campos de persona vacíos", "Los campos de búsqueda para la persona no pueden estar vacíos")),
         ERROR_CONSULTANTE_NULL(new Error(CodigosErrorNegocio.NEGOCIO_3, TipoError.NEGOCIO, "Consultante nulo", "El consultante no puede ser nulo")),;
 
         private final Error error;

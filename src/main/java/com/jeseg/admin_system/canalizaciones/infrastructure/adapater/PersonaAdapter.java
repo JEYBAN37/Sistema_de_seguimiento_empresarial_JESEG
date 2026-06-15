@@ -1,6 +1,8 @@
 package com.jeseg.admin_system.canalizaciones.infrastructure.adapater;
 
+import com.jeseg.admin_system.application.ex.BusinessException;
 import com.jeseg.admin_system.canalizaciones.domain.dto.PersonaAskRequest;
+import com.jeseg.admin_system.canalizaciones.domain.dto.PersonaUpdateState;
 import com.jeseg.admin_system.canalizaciones.domain.dto.PersonasResponse;
 import com.jeseg.admin_system.canalizaciones.domain.intreface.PersonaInterface;
 import com.jeseg.admin_system.canalizaciones.infrastructure.entity.Persona;
@@ -40,6 +42,15 @@ public class PersonaAdapter implements PersonaInterface {
                 .toList();
     }
 
+    @Override
+    public void updateState(PersonaUpdateState request) {
+        Persona persona = repository.findById(request.getId())
+                .orElseThrow(BusinessException.Type.ERROR_PERSONA_NO_ENCONTRADA::build);
+
+        persona.setEstado(request.getEstado());
+        repository.save(persona);
+    }
+
     // Método auxiliar para la conversión
     private PersonasResponse mapToResponse(Persona persona) {
         return PersonasResponse.builder()
@@ -48,7 +59,7 @@ public class PersonaAdapter implements PersonaInterface {
                 .segundoNombre(persona.getSegundoNombre() != null ? persona.getSegundoNombre().toUpperCase() : null)
                 .primerApellido(persona.getPrimerApellido().toUpperCase())
                 .segundoApellido(persona.getSegundoApellido() != null ? persona.getSegundoApellido().toUpperCase() : null)
-                .tipoDocumento(persona.getTipoDocumento().toUpperCase())
+                .tipoDocumento(persona.getTipoDocumento() != null ? persona.getTipoDocumento().toUpperCase() : null)
                 .numeroDocumento(persona.getNumeroDoc().toUpperCase())
                 .sexo(persona.getSexo() != null ? persona.getSexo().toUpperCase() : null)
                 .fechaNacimiento(persona.getFechaNacimiento() != null ? persona.getFechaNacimiento().toString() : null)
@@ -65,6 +76,9 @@ public class PersonaAdapter implements PersonaInterface {
                 .ips(persona.getIps() != null ? persona.getIps().toUpperCase() : null)
                 .aceptaFormulario(persona.getAceptaFormulario() != null ? persona.getAceptaFormulario().toUpperCase() : null)
                 .observacionIps(persona.getObservacionIps() != null ? persona.getObservacionIps().toUpperCase() : null)
+                .fechaRegistro(persona.getFechaRegistro() != null ? persona.getFechaRegistro().toString() : null)
+                .direccion(persona.getDireccion() != null ? persona.getDireccion().toUpperCase() : null)
+                .barrio(persona.getBarrioVereda() != null ? persona.getBarrioVereda().toUpperCase() : null)
                 // Agrega aquí el resto de campos de tu imagen (sexo, regimen, etc.)
                 .build();
     }

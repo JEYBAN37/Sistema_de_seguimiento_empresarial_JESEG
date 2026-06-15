@@ -28,4 +28,7 @@ public class PersonasResponse {
     private String telefono;
     private String estado;
     private String observacionIps;
+    private String fechaRegistro;
+    private String direccion;
+    private String barrio;
 }
