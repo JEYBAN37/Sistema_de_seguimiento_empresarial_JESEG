@@ -76,8 +76,8 @@ public class SecondaryDataSourceConfig {
         try {
             JSch jsch = new JSch();
             // Cambia los datos por tus credenciales reales de MochaHost
-            sshSession = jsch.getSession("andresgetial@gmail.com", "195.250.27.25", 22);
-            sshSession.setPassword("Solut1c2025");
+            sshSession = jsch.getSession("agsolutic", "195.250.27.25", 22);
+            sshSession.setPassword("Query*AP5");
 
             java.util.Properties config = new java.util.Properties();
             config.put("StrictHostKeyChecking", "no");
