@@ -45,6 +45,7 @@ public class BusinessException extends ApplicationException {
         ERROR_GUARDAR_TAREA_FECHA_INVALIDA(new Error(CodigosErrorNegocio.NEGOCIO_2, TipoError.NEGOCIO, "Error al guardar tarea fecha invalida", "La fecha de la tarea es invalida")),
         ERROR_GUARDAR_TAREA_FECHA_DIA_DIFERENTE(new Error(CodigosErrorNegocio.NEGOCIO_2, TipoError.NEGOCIO, "Error al guardar tarea fecha dia diferente", "La fecha de inicio y fin de la tarea deben ser del mismo día")),
         ERROR_GUARDAR_TAREA_HORARIO_INVALIDO(new Error(CodigosErrorNegocio.NEGOCIO_2, TipoError.NEGOCIO, "Error al guardar tarea horario invalido", "La fecha de inicio debe ser anterior a la fecha de fin")),
+        ERROR_FECHA_FILTRO_OBLIGATORIA(new Error(CodigosErrorNegocio.NEGOCIO_2, TipoError.NEGOCIO, "Error al filtrar personas", "La fecha es obligatoria para el filtro")),
         ERROR_GUARDAR_TAREA_UBICACION_NO_EXISTE(new Error(CodigosErrorNegocio.NEGOCIO_2, TipoError.NEGOCIO, "Error al guardar tarea ubicacion no existe", "La ubicación de la tarea no existe")),
         ERROR_GUARDAR_TAREA_UBICACION_INACTIVA(new Error(CodigosErrorNegocio.NEGOCIO_2, TipoError.NEGOCIO, "Error al guardar tarea transporte no activo", "El EBS no tiene autorización para realizar solicitudes de transporte")),
         ERROR_OPCIONES_FILTRO_PERSONAS_INVALIDAS(new Error(CodigosErrorNegocio.NEGOCIO_2, TipoError.NEGOCIO, "Error al filtrar personas", "Las opciones del son invalidas")),

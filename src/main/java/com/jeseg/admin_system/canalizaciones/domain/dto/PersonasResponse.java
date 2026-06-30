@@ -1,10 +1,17 @@
 package com.jeseg.admin_system.canalizaciones.domain.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Builder
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class PersonasResponse {
     private Long id;
     private String primerNombre;
@@ -28,7 +35,8 @@ public class PersonasResponse {
     private String telefono;
     private String estado;
     private String observacionIps;
-    private String fechaRegistro;
+    private LocalDateTime fechaRegistro;
     private String direccion;
     private String barrio;
+    private List<AccionCuidadoResponse> accionesCuidado;
 }

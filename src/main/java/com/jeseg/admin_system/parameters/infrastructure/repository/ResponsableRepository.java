@@ -14,4 +14,6 @@ public interface ResponsableRepository extends JpaRepository<ResponsableEntity, 
     List<ResponsableEntity> findResponsables();
 
     Optional<ResponsableEntity> findNombreById(Long id);
+
+    boolean existsByNumero(String numero);
 }

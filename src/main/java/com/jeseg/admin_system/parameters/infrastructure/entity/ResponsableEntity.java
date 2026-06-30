@@ -20,6 +20,7 @@ public class ResponsableEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nombres;
+    private String numero;
     private String profesion;
     private String celular;
     private String correo;

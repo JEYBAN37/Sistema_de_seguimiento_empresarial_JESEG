@@ -1,10 +1,10 @@
 package com.jeseg.admin_system.canalizaciones.infrastructure.adapater;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jeseg.admin_system.application.ex.BusinessException;
-import com.jeseg.admin_system.canalizaciones.domain.dto.PersonaAskRequest;
-import com.jeseg.admin_system.canalizaciones.domain.dto.PersonaUpdateState;
-import com.jeseg.admin_system.canalizaciones.domain.dto.PersonasResponse;
+import com.jeseg.admin_system.canalizaciones.domain.dto.*;
 import com.jeseg.admin_system.canalizaciones.domain.intreface.PersonaInterface;
+import com.jeseg.admin_system.canalizaciones.infrastructure.entity.AccionCuidado;
 import com.jeseg.admin_system.canalizaciones.infrastructure.entity.Persona;
 import com.jeseg.admin_system.canalizaciones.infrastructure.repository.PersonaRepository;
 import com.jeseg.admin_system.canalizaciones.infrastructure.repository.PersonaSpecifications;
@@ -13,14 +13,26 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toList;
 
 @Repository
 @AllArgsConstructor
 public class PersonaAdapter implements PersonaInterface {
     private final PersonaRepository repository;
+    private final RedisTemplate<String, Object> redisTemplate;
+    private static final String CACHE_PREFIX = "personas:diarias:";
 
     @Override
     public List<PersonasResponse> sendPersonasCanalizacion(PersonaAskRequest filtros) {
@@ -30,13 +42,10 @@ public class PersonaAdapter implements PersonaInterface {
 
         Pageable pageable = PageRequest.of(pagina, tamano);
 
-        // Creamos la especificación con todos los filtros
         Specification<Persona> spec = PersonaSpecifications.filtrarPersonas(filtros);
 
-        // Ejecutamos la consulta paginada
         Page<Persona> resultadoPage = repository.findAll(spec, pageable);
 
-        // Mapeamos a la respuesta DTO
         return resultadoPage.getContent().stream()
                 .map(this::mapToResponse)
                 .toList();
@@ -50,6 +59,79 @@ public class PersonaAdapter implements PersonaInterface {
         persona.setEstado(request.getEstado());
         repository.save(persona);
     }
+
+    @Override
+    public long contarConFiltros(PersonaAskRequest filtros) {
+        Specification<Persona> spec = PersonaSpecifications.filtrarPersonas(filtros);
+        return repository.count(spec);
+    }
+
+    @Override
+    @Transactional(value = "secondaryTransactionManager", readOnly = true)
+    public List<PersonasResponse> obtenerTodoElDia(PersonaAskRequest filtros) {
+        Specification<Persona> spec = PersonaSpecifications.filtrarPersonas(filtros);
+        return repository.findAll(spec).stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
+    @Override
+    public ContenedorCache obtenerDeCache(String llave) {
+        String key = CACHE_PREFIX + llave;
+        try {
+            Object rawCache = redisTemplate.opsForValue().get(key);
+
+            if (rawCache == null) {
+                return null;
+            }
+
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.registerModule(new com.fasterxml.jackson.datatype.jsr310.JavaTimeModule());
+
+            return mapper.convertValue(rawCache, ContenedorCache.class);
+
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @Override
+    public void guardarEnCache(String llave, List<PersonasResponse> contenedor, LocalDateTime ultimaActualizacion) {
+        if (llave == null || contenedor == null) {
+            return;
+        }
+
+        String key = CACHE_PREFIX + llave;
+
+        ContenedorCache nuevoContenedor = ContenedorCache.builder()
+                .ultimaActualizacion(ultimaActualizacion != null ? ultimaActualizacion : LocalDateTime.now())
+                .data(contenedor)
+                .build();
+
+        redisTemplate.opsForValue().set(key, nuevoContenedor);
+
+        redisTemplate.expire(key, 24, java.util.concurrent.TimeUnit.HOURS);
+
+    }
+
+    @Override
+    public List<PersonasResponse> obtenerNuevosDesde(LocalDateTime ultimoCheck, PersonaAskRequest filtros) {
+
+        Specification<Persona> specFiltros = PersonaSpecifications.filtrarPersonas(filtros);
+
+        Specification<Persona> specDelta = (root, query, cb) ->
+                cb.greaterThan(root.get("fechaRegistro"), ultimoCheck);
+        Specification<Persona> specFinal = specFiltros.and(specDelta);
+
+        try (Stream<Persona> streamNuevos = repository.findAll(specFinal).stream()) {
+            return streamNuevos
+                    .map(this::mapToResponse)
+                    .toList();
+        } catch (Exception e) {
+            return Collections.emptyList();
+        }
+    }
+
 
     // Método auxiliar para la conversión
     private PersonasResponse mapToResponse(Persona persona) {
@@ -76,10 +158,30 @@ public class PersonaAdapter implements PersonaInterface {
                 .ips(persona.getIps() != null ? persona.getIps().toUpperCase() : null)
                 .aceptaFormulario(persona.getAceptaFormulario() != null ? persona.getAceptaFormulario().toUpperCase() : null)
                 .observacionIps(persona.getObservacionIps() != null ? persona.getObservacionIps().toUpperCase() : null)
-                .fechaRegistro(persona.getFechaRegistro() != null ? persona.getFechaRegistro().toString() : null)
+                .fechaRegistro(persona.getFechaRegistro() != null ? persona.getFechaRegistro() : null)
                 .direccion(persona.getDireccion() != null ? persona.getDireccion().toUpperCase() : null)
                 .barrio(persona.getBarrioVereda() != null ? persona.getBarrioVereda().toUpperCase() : null)
-                // Agrega aquí el resto de campos de tu imagen (sexo, regimen, etc.)
+                .accionesCuidado(persona.getAcciones() != null ? persona.getAcciones().stream()
+                        .map(this::mapToAccionCuidadoResponse)
+                        .toList() : null)
+                .build();
+    }
+
+    private AccionCuidadoResponse mapToAccionCuidadoResponse(AccionCuidado accion) {
+        String responsableVisualizar = null;
+
+        if (accion.getResponsableRelacion() != null && accion.getResponsableRelacion().getNombres() != null) {
+            responsableVisualizar = accion.getResponsableRelacion().getNombres().toUpperCase();
+        } else if (accion.getCedulaResponsableSeguimiento() != null) {
+            responsableVisualizar = accion.getCedulaResponsableSeguimiento().toUpperCase();
+        }
+
+        return AccionCuidadoResponse.builder()
+                .id(accion.getId())
+                .estado(accion.getEstado() != null ? accion.getEstado().toUpperCase() : null)
+                .fechaCompromiso(accion.getFechaSeguimiento() != null ? accion.getFechaCompromiso() : null)
+                .situacionesPriorizadas(accion.getSituacionesPriorizadas() != null ? accion.getSituacionesPriorizadas().toUpperCase() : null)
+                .responsableSeguimiento(responsableVisualizar)
                 .build();
     }
 }

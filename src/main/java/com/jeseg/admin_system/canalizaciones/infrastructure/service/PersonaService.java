@@ -13,6 +13,7 @@ import com.jeseg.admin_system.company.infrastructure.entity.CompanyEntity;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -36,6 +37,13 @@ public class PersonaService {
             throw BusinessException.Type.ERROR_OPCIONES_FILTRO_PERSONAS_INVALIDAS.build();
         }
         personaApiUseCase.updateState(request);
+    }
+
+    public List<PersonasResponse> obtenerDeBaseDatos (PersonaAskRequest request){
+        if (request == null) {
+            throw ERROR_OPCIONES_FILTRO_PERSONAS_INVALIDAS.build();
+        }
+        return personaApiUseCase.obtenerDeBaseDatos(request);
     }
 
 }

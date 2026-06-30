@@ -2,7 +2,9 @@ package com.jeseg.admin_system.application;
 
 import com.jeseg.admin_system.approval.domain.intreface.ApprovalInterface;
 import com.jeseg.admin_system.approval.domain.usecase.ApprovalUseCases;
+import com.jeseg.admin_system.canalizaciones.domain.intreface.AccionCuidadoInterface;
 import com.jeseg.admin_system.canalizaciones.domain.intreface.PersonaInterface;
+import com.jeseg.admin_system.canalizaciones.domain.usecase.AccionCuidadoUseCase;
 import com.jeseg.admin_system.canalizaciones.domain.usecase.PersonaApiUseCase;
 import com.jeseg.admin_system.company.domain.intreface.CompanyInterface;
 import com.jeseg.admin_system.company.domain.usecase.CompanyUseCases;
@@ -72,6 +74,11 @@ public class UseCaseConfig {
     @Bean
     public PersonaApiUseCase personaApiUseCase (PersonaInterface personaInterface){
         return new PersonaApiUseCase(personaInterface);
+    }
+
+    @Bean
+    public AccionCuidadoUseCase accionCuidadoUseCase (AccionCuidadoInterface accionCuidadoInterface){
+        return new AccionCuidadoUseCase(accionCuidadoInterface);
     }
 
 }

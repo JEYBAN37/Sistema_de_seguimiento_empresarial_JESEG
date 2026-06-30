@@ -13,10 +13,12 @@ import com.jeseg.admin_system.company.infrastructure.entity.CompanyEntity;
 import com.jeseg.admin_system.company.infrastructure.service.CompanyService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -35,4 +37,9 @@ public class PersonaController {
         personaService.updateState(persona);
         return ResponseEntity.ok().build();
     }
+    @PostMapping(value = "/getDataBlob", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<PersonasResponse>> obtenerDeBaseDatos (@Valid @RequestBody PersonaAskRequest personaAskRequest){
+        return ResponseEntity.ok(personaService.obtenerDeBaseDatos(personaAskRequest));
+    }
+
 }

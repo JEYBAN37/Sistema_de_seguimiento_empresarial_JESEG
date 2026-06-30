@@ -24,4 +24,5 @@ public class PersonaAskRequest {
     private String deteccionTemprana;
     List<String> ips;
     private String periodoBusqueda;
+    private String periodoBusquedaBetween;
 }

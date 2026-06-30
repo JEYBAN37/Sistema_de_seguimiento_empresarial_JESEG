@@ -23,11 +23,22 @@ spring:
       username: agsolutic_esteban
       password: "P@sto1945"
       driver-class-name: com.mysql.cj.jdbc.Driver
+      dialect: org.hibernate.dialect.MySQL5Dialect
       hikari:
         maximum-pool-size: 2
         connection-timeout: 30000
         idle-timeout: 60000
         pool-name: HikariPoolSecondary
+  data:
+    redis:
+      host: "rice-warm-sesame-75595.db.redis.io"
+      port: 18918
+      password: "EREsIFJsLpHJ2AQHjdYtRvP8AsYkU3Cy"
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
 
   security:
     user:

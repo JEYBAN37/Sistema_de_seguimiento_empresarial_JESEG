@@ -3,6 +3,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.checkerframework.checker.units.qual.C;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 @Entity
 @Data
 @Builder
@@ -81,13 +84,16 @@ public class Persona {
     private String observacionIps;
 
     @Column(name = "fecharegistro")
-    private String fechaRegistro;
+    private LocalDateTime fechaRegistro;
 
     @Column(name = "direccion")
     private String direccion;
 
     @Column(name = "barriovereda")
     private String barrioVereda;
+
+    @OneToMany(mappedBy = "persona", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AccionCuidado> acciones;
 
 
     //@Column(name = "direccion")

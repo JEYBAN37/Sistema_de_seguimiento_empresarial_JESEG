@@ -48,9 +48,9 @@ public class PersonaSpecifications {
             }
 
             // 3. Periodo de búsqueda
-            if (filtros.getPeriodoBusqueda() != null && !filtros.getPeriodoBusqueda().isEmpty()) {
+            if (filtros.getPeriodoBusquedaBetween() != null && !filtros.getPeriodoBusquedaBetween().isEmpty()) {
                 try {
-                    String[] fechas = filtros.getPeriodoBusqueda().split(",");
+                    String[] fechas = filtros.getPeriodoBusquedaBetween().split(",");
                     if (fechas.length != 2) {
                         throw BusinessException.Type.ERROR_FORMATO_PERIODO_BUSQUEDA_INVALIDO.build();
                     }
@@ -68,8 +68,17 @@ public class PersonaSpecifications {
                     throw BusinessException.Type.FECHA_OBLIGATORIA_CONSULTANTE.build();
                 }
 
-            } else {
-                throw BusinessException.Type.ERROR_FORMATO_PERIODO_BUSQUEDA_INVALIDO.build();
+            }
+
+            if (filtros.getPeriodoBusqueda() != null && !filtros.getPeriodoBusqueda().isEmpty()) {
+                try {
+                    DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                    LocalDate fecha = LocalDate.parse(filtros.getPeriodoBusqueda(), fmt);
+
+                    predicates.add(cb.between(root.get("fechaRegistro"), fecha.atStartOfDay(), fecha.atTime(23, 59, 59)));
+                } catch (Exception e) {
+                    throw BusinessException.Type.FECHA_OBLIGATORIA_CONSULTANTE.build();
+                }
             }
 
             List<Predicate> orPreds = new ArrayList<>();
